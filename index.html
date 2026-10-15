@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Onde Melhorar · Bestiário Cabal</title>
+<meta name="description" content="Escolha um chefe do bestiário do Cabal Online BR e veja qual atributo seu mais acelera a morte dele.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Ordem: seus status (envio de prints), alvo escolhido, onde melhorar + metas, visão da DG inteira. */
+:root {
+  --bg: #0d1120; --surface: #151b30; --surface-2: #1b2340; --line: #29335a;
+  --fg: #e8ebf7; --muted: #929cc0; --accent: #e3b45a; --accent-ink: #1c1405;
+  --good: #5fd08b; --bad: #ff7070; --warn: #f2a94e;
+  --font-display: 'Chakra Petch', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f2f3f9; --surface: #ffffff; --surface-2: #eceef7; --line: #d5d9ea;
+    --fg: #161a2e; --muted: #596287; --accent: #8f6200; --accent-ink: #ffffff;
+    --good: #17814a; --bad: #c22f2f; --warn: #9a5800; color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #f2f3f9; --surface: #ffffff; --surface-2: #eceef7; --line: #d5d9ea;
+  --fg: #161a2e; --muted: #596287; --accent: #8f6200; --accent-ink: #ffffff;
+  --good: #17814a; --bad: #c22f2f; --warn: #9a5800; color-scheme: light;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font: 15px/1.5 var(--font-body);
+  padding-block: 20px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+h1, h2, h3 { font-family: var(--font-display); margin: 0; text-wrap: balance; }
+h1 { font-size: 1.7rem; font-weight: 700; letter-spacing: .01em; }
+h2 { font-size: .8rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.sub { color: var(--muted); margin: 2px 0 0; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; min-width: 0; }
+.card > h2 { margin-bottom: 12px; }
+.note, .hint { color: var(--muted); font-size: .88rem; margin: 0; }
+.hint { font-size: .78rem; margin-top: 6px; }
+label { font-size: .78rem; color: var(--muted); }
+select, input[type=number] {
+  width: 100%; background: var(--surface-2); color: var(--fg); border: 1px solid var(--line);
+  border-radius: 6px; padding: 7px 9px; font: inherit; font-variant-numeric: tabular-nums;
+}
+input[type=number] { text-align: right; }
+select:focus-visible, input:focus-visible, button:focus-visible, summary:focus-visible, tr:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+button.go, button.ghost { border-radius: 6px; padding: 9px 16px; font: 600 .9rem var(--font-display); letter-spacing: .04em; cursor: pointer; }
+button.go { background: var(--accent); color: var(--accent-ink); border: 0; }
+button.go:hover { filter: brightness(1.08); }
+button.go:disabled { opacity: .55; cursor: default; }
+button.ghost { background: transparent; color: var(--fg); border: 1px solid var(--line); }
+.t-good { color: var(--good); } .t-bad { color: var(--bad); } .t-warn { color: var(--warn); }
+.pill { font-family: var(--font-display); font-size: .7rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; border: 1px solid currentColor; white-space: nowrap; display: inline-block; }
+
+/* envio de prints */
+.up { display: flex; flex-direction: column; gap: 10px; }
+.uprow { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.drop { flex: 1 1 260px; border: 1px dashed var(--line); border-radius: 8px; padding: 12px 14px; background: var(--surface-2); cursor: pointer; min-width: 0; }
+.drop:hover, .drop.over { border-color: var(--accent); }
+.drop strong { font-family: var(--font-display); }
+.files { font-size: .85rem; color: var(--muted); overflow-wrap: anywhere; }
+.status { font-size: .88rem; min-height: 1.3em; }
+.kv { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; font-size: .78rem; font-variant-numeric: tabular-nums; }
+
+details.stats > summary { cursor: pointer; font-family: var(--font-display); color: var(--accent); padding: 4px 0; }
+.grp { font-family: var(--font-display); font-size: .85rem; color: var(--accent); margin: 14px 0 6px; }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) 96px 96px; gap: 8px; align-items: center; padding: 3px 0; }
+.row.head { color: var(--muted); font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; }
+.row.head span:not(:first-child) { text-align: right; padding-right: 9px; }
+.row .lab { font-size: .9rem; overflow-wrap: anywhere; }
+.fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+.f { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+
+/* alvo */
+.vhead { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; }
+.pick { display: flex; flex-direction: column; gap: 4px; flex: 1 1 260px; min-width: 0; }
+.headline { font-family: var(--font-display); font-size: clamp(1.2rem, 4.2vw, 1.7rem); font-weight: 700; line-height: 1.25; margin-top: 14px; }
+.headline .tag { display: inline-block; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 4px; vertical-align: middle; margin-right: 8px; border: 1px solid currentColor; }
+.tstats { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+
+/* ranking */
+.two { display: grid; grid-template-columns: 1.25fr 1fr; gap: 16px; align-items: start; }
+@media (max-width: 860px) { .two { grid-template-columns: 1fr; } }
+ol.rank { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+ol.rank li { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr) auto; gap: 4px 10px; align-items: baseline; }
+.pos { font-family: var(--font-display); color: var(--muted); font-weight: 600; }
+.rl { font-weight: 600; overflow-wrap: anywhere; }
+.rl small { font-weight: 400; color: var(--muted); font-size: .78rem; margin-left: 6px; }
+.gn { font-family: var(--font-display); font-weight: 700; font-variant-numeric: tabular-nums; color: var(--good); white-space: nowrap; }
+.bar { grid-column: 2 / 4; height: 7px; background: var(--surface-2); border-radius: 4px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); border-radius: 4px; }
+.rs { grid-column: 2 / 4; color: var(--muted); font-size: .8rem; margin-top: -2px; }
+.zero { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.zero ul { margin: 6px 0 0; padding-left: 18px; color: var(--muted); font-size: .85rem; }
+ul.goals { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+ul.goals li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: start; font-size: .9rem; }
+ul.goals .gl { font-weight: 600; }
+ul.goals .gv { color: var(--muted); font-size: .82rem; font-variant-numeric: tabular-nums; }
+
+/* visão da DG */
+.tw { overflow-x: auto; }
+table.ov { width: 100%; border-collapse: collapse; font-size: .88rem; min-width: 620px; }
+table.ov th { text-align: left; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+table.ov td { padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top; font-variant-numeric: tabular-nums; }
+table.ov tbody tr { cursor: pointer; }
+table.ov tbody tr:hover, table.ov tbody tr.sel { background: var(--surface-2); }
+table.ov .r { text-align: right; }
+ul.assume { margin: 0; padding-left: 18px; color: var(--muted); font-size: .88rem; display: flex; flex-direction: column; gap: 4px; }
+</style>
+</head><body>
+<div class="wrap">
+  <header>
+    <h1>Onde Melhorar</h1>
+    <p class="sub">Cabal Online BR. Escolha um chefe do bestiário e veja qual atributo seu mais acelera a morte dele.</p>
+  </header>
+
+  <section class="card up" id="upCard">
+    <h2>1. Seus status</h2>
+    <p class="note">Digite os números das telas <strong>Status de Ataque</strong>, <strong>Defesa</strong> e <strong>Outros atributos</strong> do seu personagem. Os campos começam com valores de exemplo: clique em "Zerar tudo" e preencha os seus.</p>
+    <details class="stats" id="statsBox" open>
+      <summary>Seus números</summary>
+      <div class="fields" style="margin:12px 0">
+        <div class="f"><label for="p_hp">HP</label><input id="p_hp" type="number" value="23834" min="0"></div>
+        <div class="f"><label for="p_critRate">Taxa crítica (%)</label><input id="p_critRate" type="number" value="86" min="0" max="100"></div>
+      </div>
+      <div id="player"></div>
+      <div class="uprow" style="margin-top:12px"><button class="ghost" id="clearBtn" type="button">Zerar tudo</button></div>
+      <p class="hint">Começa com os números do criador da página. Os valores de PvE somam aos gerais. Tudo fica salvo só neste navegador.</p>
+    </details>
+  </section>
+
+  <section class="card" aria-live="polite">
+    <h2>2. Alvo</h2>
+    <div class="vhead">
+      <div class="pick"><label for="dg_pick">Calabouço</label><select id="dg_pick"></select></div>
+      <div class="pick"><label for="boss_pick">Chefe ou monstro</label><select id="boss_pick"></select></div>
+    </div>
+    <div class="headline" id="headline"></div>
+    <p class="note" id="subline" style="margin-top:4px"></p>
+    <div class="tstats" id="tstats"></div>
+  </section>
+
+  <div class="two">
+    <section class="card">
+      <h2>Onde melhorar, do que mais rende ao que menos rende</h2>
+      <ol class="rank" id="rank"></ol>
+      <div class="zero" id="zero"></div>
+      <p class="hint">Cada linha mostra quanto o dano esperado por golpe sobe se o atributo crescer o valor indicado (cerca de 10%). Já considera acerto, crítico, defesa e resistências do alvo.</p>
+    </section>
+    <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+      <section class="card">
+        <h2>Metas contra este alvo</h2>
+        <ul class="goals" id="goals"></ul>
+      </section>
+      <section class="card">
+        <h2>Regeneração e calibração</h2>
+        <div id="regen" class="note" style="margin-bottom:12px"></div>
+        <div class="fields">
+          <div class="f"><label for="c_real">Dano real do seu golpe normal</label><input id="c_real" type="number" min="0" placeholder="opcional"></div>
+          <div class="f"><label for="c_rate">Golpes por segundo</label><input id="c_rate" type="number" min="0.1" step="0.1" value="1"></div>
+          <div class="f"><label for="c_skill">Multiplicador da skill (%)</label><input id="c_skill" type="number" min="1" value="100"></div>
+        </div>
+        <p class="hint">Só serve para comparar o seu dano por segundo com a regeneração do alvo. O ranking não depende disso.</p>
+      </section>
+    </div>
+  </div>
+
+  <section class="card">
+    <h2>3. A DG inteira: maior gargalo por alvo</h2>
+    <div class="tw"><table class="ov"><thead><tr><th>Alvo</th><th class="r">HP</th><th class="r">Acerta</th><th class="r">Defesa que sobra</th><th>Maior gargalo</th></tr></thead><tbody id="ovBody"></tbody></table></div>
+    <p class="hint">Gargalo = o atributo específico contra aquele alvo (acerto, perfuração, resistências, redução) que mais aumenta o seu dano. Clique em uma linha para abrir o alvo.</p>
+  </section>
+
+  <section class="card">
+    <h2>Como funciona</h2>
+    <ul class="assume">
+      <li>Dados do bestiário em neogames.online, DGs de nível 180 em diante. Onde o site não lista um valor, o campo vale zero.</li>
+      <li>A fórmula de dano do jogo não é pública. O modelo é uma estimativa só para comparar atributos entre si: o dano de um golpe é Ataque × Técnica amp. × skill + Dano adicional, menos a defesa que sobra depois da perfuração, mais crítico e acerto.</li>
+      <li>Resistências do alvo (taxa crítica, dano crítico, técnica amp.) descontam do seu valor, e o seu "ignorar resistência" cancela essa perda. A taxa crítica tem teto de 86%.</li>
+      <li>O bloqueio do alvo aparece como meta, mas não entra no cálculo do ranking.</li>
+      <li>Os dados dos bosses podem ter erros de leitura do site. Confira no jogo se algum valor parecer estranho.</li>
+      <li>Fonte dos dados: bestiário do jogo em neogames.online. Projeto de fã, sem ligação com a Webzen, a ESTsoft ou o site.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+/*CORE*/
+const CRIT_CAP = 86;
+function num(v) { v = Number(v); return Number.isFinite(v) ? v : 0; }
+function clamp(x, a, b) { return Math.min(b, Math.max(a, x)); }
+
+/* Modelo relativo: só serve para comparar o efeito de cada atributo, não para prever o dano exato do jogo. */
+function evalHit(P, B, skill) {
+  skill = skill || 100;
+  const ignPerfLeft = Math.max(0, B.ignPerf - P.cancelIgnPerf);
+  const perfEff = Math.max(0, P.perf - ignPerfLeft);
+  const defLeft = Math.max(0, B.def - perfEff);
+  const redLeft = Math.max(0, B.red - P.ignRed);
+  const ampEff = Math.max(0, P.amp - Math.max(0, B.rAmp - P.ignResAmp));
+  const critDmgEff = Math.max(0, P.crit - Math.max(0, B.rCritDmg - P.ignResCritDmg));
+  const critRateEff = clamp(P.critRate - Math.max(0, B.rCritRate - P.ignResCritRate), 0, 100);
+  const raw = P.atk * (1 + ampEff / 100) * (skill / 100) + P.add;
+  const normal = Math.max(1, raw - defLeft - redLeft) * (1 + P.finalUp / 100);
+  const critMult = 1 + critDmgEff / 100;
+  const crit = normal * critMult;
+  const aimEff = Math.max(0, P.aim - B.ignAim);
+  const evaLeft = Math.max(0, B.eva - aimEff);
+  const d = P.prec + evaLeft;
+  const hitP = d <= 0 ? 1 : P.prec / d;
+  const critP = critRateEff / 100;
+  const E = hitP * (critP * crit + (1 - critP) * normal);
+  return { E, hitP, critP, normal, crit, critMult, defLeft, redLeft, perfEff, ampEff, critDmgEff, critRateEff, aimEff, evaLeft, ignPerfLeft };
+}
+
+const LEVERS = [
+  { k: 'atk', lab: 'Ataque', min: 50 },
+  { k: 'amp', lab: 'Técnica de espada amp.', unit: '%', min: 10 },
+  { k: 'crit', lab: 'Dano crítico', unit: '%', min: 20 },
+  { k: 'add', lab: 'Dano adicional', min: 20 },
+  { k: 'finalUp', lab: 'Dano final aumentado', unit: '%', min: 2 },
+  { k: 'perf', spec: true, lab: 'Perfuração', min: 50 },
+  { k: 'aim', spec: true, lab: 'Acerto', min: 50 },
+  { k: 'prec', spec: true, lab: 'Precisão', min: 100 },
+  { k: 'critRate', lab: 'Taxa crítica', unit: '%', min: 2, cap: CRIT_CAP },
+  { k: 'ignRed', spec: true, lab: 'Ignorar redução de dano', min: 50 },
+  { k: 'cancelIgnPerf', spec: true, lab: 'Cancelar ignorar perfuração', min: 50 },
+  { k: 'ignResCritRate', spec: true, lab: 'Ignorar resist. taxa crítica', unit: '%', min: 5 },
+  { k: 'ignResCritDmg', spec: true, lab: 'Ignorar resist. dano crítico', unit: '%', min: 20 },
+  { k: 'ignResAmp', spec: true, lab: 'Ignorar resist. técnica amp.', unit: '%', min: 10 }
+];
+
+/* Valor do atributo que zera o problema que ele resolve (ou null se não há meta objetiva). */
+function needOf(k, P, B) {
+  switch (k) {
+    case 'aim': return B.eva + B.ignAim;
+    case 'perf': return B.def + Math.max(0, B.ignPerf - P.cancelIgnPerf);
+    case 'cancelIgnPerf': return B.ignPerf;
+    case 'ignRed': return B.red;
+    case 'ignResCritRate': return B.rCritRate;
+    case 'ignResCritDmg': return B.rCritDmg;
+    case 'ignResAmp': return B.rAmp;
+    case 'critRate': return CRIT_CAP;
+    default: return null;
+  }
+}
+function reasonOf(k, P, B, m) {
+  switch (k) {
+    case 'aim': return m.evaLeft === 0 ? 'seu Acerto já passa a evasão do alvo' : '';
+    case 'perf': return m.defLeft === 0 ? 'a defesa do alvo já está zerada' : '';
+    case 'cancelIgnPerf': return B.ignPerf === 0 ? 'o alvo não ignora perfuração' : (m.ignPerfLeft === 0 ? 'já cancela tudo que o alvo ignora' : '');
+    case 'ignRed': return B.red === 0 ? 'o alvo não tem redução de danos' : (m.redLeft === 0 ? 'já cobre a redução do alvo' : '');
+    case 'ignResCritRate': return B.rCritRate === 0 ? 'o alvo não resiste à taxa crítica' : (P.ignResCritRate >= B.rCritRate ? 'já cancela a resistência do alvo' : '');
+    case 'ignResCritDmg': return B.rCritDmg === 0 ? 'o alvo não resiste ao dano crítico' : (P.ignResCritDmg >= B.rCritDmg ? 'já cancela a resistência do alvo' : '');
+    case 'ignResAmp': return B.rAmp === 0 ? 'o alvo não resiste à técnica amp.' : (P.ignResAmp >= B.rAmp ? 'já cancela a resistência do alvo' : '');
+    case 'critRate': return P.critRate >= CRIT_CAP ? 'já está no teto de ' + CRIT_CAP + '%' : '';
+    default: return '';
+  }
+}
+
+/* Para cada atributo: quanto o dano esperado por golpe sobe se ele crescer 10% (com um mínimo por atributo). */
+function rankLevers(P, B, skill) {
+  const base = evalHit(P, B, skill);
+  return LEVERS.map((L) => {
+    const have = P[L.k];
+    let step = Math.ceil(Math.max(have * 0.1, L.min));
+    if (L.cap != null) step = Math.max(0, Math.min(step, L.cap - have));
+    let gain = 0;
+    if (step > 0) {
+      const P2 = Object.assign({}, P); P2[L.k] = have + step;
+      gain = base.E > 0 ? evalHit(P2, B, skill).E / base.E - 1 : 0;
+    }
+    const need = needOf(L.k, P, B);
+    return { L, have, step, gain: gain < 1e-6 ? 0 : gain, need, miss: need == null ? null : Math.max(0, need - have), reason: gain < 1e-6 ? reasonOf(L.k, P, B, base) : '' };
+  }).sort((a, b) => b.gain - a.gain);
+}
+
+/* Lista de metas objetivas. kind: ok | warn | bad. */
+function goals(P, B, base, calib) {
+  const g = [];
+  const mk = (id, lab, have, need, kind, text) => g.push({ id, lab, have, need, kind, text });
+  const needAim = B.eva + B.ignAim;
+  mk('aim', 'Acerto', P.aim, needAim, P.aim >= needAim ? 'ok' : (base.hitP < 0.7 ? 'bad' : 'warn'),
+    P.aim >= needAim ? 'Acerta 100% dos golpes.' : 'Hoje acerta ' + Math.round(base.hitP * 100) + '% dos golpes. Evasão do alvo: ' + B.eva + (B.ignAim ? ', mais ' + B.ignAim + ' de Ignorar acerto dele' : '') + '.');
+  mk('blk', 'Ignorar bloqueio', P.ignBlock, B.blk, P.ignBlock >= B.blk ? 'ok' : 'warn',
+    P.ignBlock >= B.blk ? 'Passa o bloqueio do alvo.' : 'O alvo pode bloquear parte dos golpes.');
+  const needPerf = needOf('perf', P, B);
+  mk('perf', 'Perfuração', P.perf, needPerf, P.perf >= needPerf ? 'ok' : (base.defLeft > B.def * 0.5 ? 'bad' : 'warn'),
+    P.perf >= needPerf ? 'Zera a defesa do alvo.' : 'Ainda sobram ' + Math.round(base.defLeft) + ' de defesa no alvo.');
+  if (B.ignPerf > 0) mk('cip', 'Cancelar ignorar perfuração', P.cancelIgnPerf, B.ignPerf, P.cancelIgnPerf >= B.ignPerf ? 'ok' : 'warn',
+    P.cancelIgnPerf >= B.ignPerf ? 'Sua perfuração não perde nada.' : 'O alvo ignora ' + B.ignPerf + ' de perfuração. Cancelar mais devolve perfuração.');
+  if (B.red > 0) mk('red', 'Ignorar redução de dano', P.ignRed, B.red, P.ignRed >= B.red ? 'ok' : 'warn',
+    P.ignRed >= B.red ? 'Ignora toda a redução do alvo.' : 'Sobram ' + Math.round(base.redLeft) + ' de redução descontando seus golpes.');
+  if (B.rCritRate > 0) mk('rcr', 'Ignorar resist. taxa crítica', P.ignResCritRate, B.rCritRate, P.ignResCritRate >= B.rCritRate ? 'ok' : 'warn',
+    'Taxa crítica efetiva: ' + Math.round(base.critRateEff) + '%.');
+  if (B.rCritDmg > 0) mk('rcd', 'Ignorar resist. dano crítico', P.ignResCritDmg, B.rCritDmg, P.ignResCritDmg >= B.rCritDmg ? 'ok' : 'warn',
+    'Dano crítico efetivo: ' + Math.round(base.critDmgEff) + '%.');
+  if (B.rAmp > 0) mk('ramp', 'Ignorar resist. técnica amp.', P.ignResAmp, B.rAmp, P.ignResAmp >= B.rAmp ? 'ok' : 'warn',
+    'Técnica amp. efetiva: ' + Math.round(base.ampEff) + '%.');
+  return g;
+}
+
+/* Regeneração do alvo contra o seu dano por segundo. calib = {scale, rate} (scale = dano real ÷ dano estimado). */
+function regenCheck(P, B, base, calib) {
+  if (!(B.regen > 0)) return null;
+  const dps = base.E * calib.scale * calib.rate;
+  return { regen: B.regen, dps, calibrated: calib.calibrated, share: dps > 0 ? B.regen / dps : Infinity };
+}
+/*ENDCORE*/
+
+/* ---------- dados ---------- */
+const DG_DATA = [
+  ["Purificador na Floresta", [
+    ["C","Antigo ser Omerai",250,50734806,200000,10338,6500,3800,7000,16110,1700,1300,1890,1500,1200,60,750,130],
+    ["C","Sob a rainha Ripley",250,45765487,180000,10338,5800,4000,6700,15466,1775,1300,1785,1000,1000,45,600,110],
+    ["C","Electula",250,41734806,0,19298,9000,3800,6500,11371,500,120,0,1000,900,30,450,45],
+    ["C","Meu Belzebu",250,37295910,0,10338,5550,3600,5175,14499,1375,110,0,1300,900,28,450,45],
+    ["C","Presa Sangrenta",250,35402300,0,10338,5500,3500,4320,7416,500,100,0,1200,900,24,450,45],
+    ["M","Electrisha",240,1500000,0,21619,10000,8000,3920,7206,500,130,1500,450,70,22,0,0],
+    ["M","Mãe Varredora Sangrenta",230,20000000,0,25648,45000,1500,960,8162,500,50,0,400,100,10,100,15],
+    ["M","O Alter Ego de Omerai",230,10000,0,17633,6000,6000,1248,2332,500,30,0,500,310,0,0,0],
+    ["M","Varredor Sangrento",220,700000,0,16973,9500,1800,4512,9048,500,0,0,1000,45,0,0,0],
+    ["M","Chifre Sangrento",220,2000000,0,14813,4600,2000,4700,6786,500,80,0,1300,45,15,0,0],
+    ["M","Koraider",220,2400000,0,15121,4900,2200,4888,6786,500,100,1000,1200,120,18,0,0],
+    ["M","Koraider Mutante",220,2300000,0,15121,5100,2500,4794,6786,500,120,800,1100,60,21,0,0],
+    ["M","Pesquisador desaparecido",220,6000,0,3086,330,264,940,2262,500,30,0,90,45,0,0,0],
+    ["M","Círculo Mágico de Sangue",200,6000,0,22768,50000,240,1170,2122,500,0,0,0,0,0,0,0],
+    ["M","Formiga Sagrada",200,1500000,0,14799,80000,8000,3600,5729,1500,0,0,0,0,0,0,0],
+    ["M","Formigueiro",150,2000000,0,2246,225,180,800,1772,500,30,1785,1000,265,35,306,76],
+    ["M","Formigueiro ardente",150,4000,0,2246,225,180,800,1772,500,30,0,20,10,0,0,0]
+  ]],
+  ["Arena Legendária", [
+    ["C","Baldus",220,999999999,999999,9941,7350,1852,7000,5711,1270,735,475,0,1200,25,750,130]
+  ]],
+  ["Cidade Abandonada", [
+    ["C","O 5º Cientista Maléfico Shane",245,6173600,20000,11005,7500,2650,3366,9040,1350,475,850,0,57,12,0,0],
+    ["C","O Mal de Shane - Desespero",250,5038720,16000,11372,8000,2700,3400,9344,1400,500,900,0,60,13,0,0],
+    ["C","O Mal de Shane - Destruição",250,5038720,16000,11716,9000,2800,3600,9666,1500,550,1000,0,60,15,0,0],
+    ["C","O Mal de Shane - Desespero",250,5038720,17000,11372,8000,2700,3400,9344,1400,500,900,0,60,13,0,0],
+    ["C","O 5º Cientista Maléfico Shane",245,4691936,0,11005,7500,2650,3317,9040,1350,475,850,0,57,12,0,0],
+    ["C","A 4ª Cientista Maléfica Eilyn",240,4355136,8000,10643,7000,2600,3038,8429,1300,450,800,0,55,11,0,0],
+    ["C","Flor Mortífera",220,4162200,20000,8641,5200,2400,4700,2262,2000,20000,600,0,90,45,7,0],
+    ["C","O 2º Cientista Maléfico O Líder",230,3943456,11000,9618,6000,2500,3072,8159,1200,400,700,0,50,9,0,0],
+    ["C","O 3º Cientista Maléfico Professor Colton",240,3629280,14000,10643,7000,2600,3234,8742,1300,450,800,0,55,11,0,0],
+    ["C","O 2º Cientista Maléfico Flor da Ilusão",220,3329760,8000,8641,5000,2400,2914,7597,1100,350,600,0,45,7,0,0],
+    ["C","A 3ª Cientista Maléfica Ailyn",235,3317440,4000,10288,6500,2550,2959,8141,1250,400,700,0,52,9,0,0],
+    ["C","2º Comandante Newgreen",220,2441824,6000,8332,5100,2350,2867,7451,1075,325,575,0,45,6,0,0],
+    ["C","Campo Magnético de Colton",240,2419520,0,10643,7000,2600,3234,8742,1300,450,800,0,55,11,0,0],
+    ["C","Golem de Shane",200,1212096,0,6577,5100,2350,2745,2585,500,0,0,0,0,6,0,0],
+    ["M","Chefe de Pesquisa J.C. Love",235,2843520,7000,9471,5300,2450,3056,8141,1000,375,650,0,52,8,0,0],
+    ["M","Bibliotecário Evan",235,2843520,7000,9471,5300,2450,3056,8141,1000,375,650,0,52,8,0,0],
+    ["M","Guardiã do Portão Luna",230,2087712,9000,9458,5400,2550,3072,8159,1000,385,750,0,50,9,0,0],
+    ["M","Guardião do Portão Reeve",230,2087712,9000,9458,5400,2550,3072,8159,1000,385,750,0,50,9,0,0],
+    ["M","Maldição Sombria do Mal",230,2087712,9000,9458,5400,2550,3072,8159,1000,385,750,0,50,9,0,0],
+    ["M","Mística Sombria do Mal",230,2087712,9000,9458,5400,2550,3072,8159,1000,385,750,0,50,9,0,0],
+    ["M","Dominion de Guardião do Mal",230,2087712,9000,9458,5400,2550,3072,8159,1000,385,750,0,50,9,0,0],
+    ["M","Origem da Ruína - Capítulo 2",224,448296,0,8274,3390,1695,2740,5817,1000,339,740,94,47,3,0,0],
+    ["M","Origem da Ruína - Capítulo 2",220,437031,0,8024,3350,1675,2679,5655,1000,335,700,90,45,3,0,0],
+    ["M","Origem da Ruína - Capítulo 2",216,425886,0,7777,3310,1655,2619,5496,1000,331,660,86,43,3,0,0],
+    ["M","1º Comandante Craudel",215,1952928,5000,7868,5000,2300,2790,7180,1050,300,500,0,42,5,0,0],
+    ["M","Origem da Ruína - Capítulo 1",215,423134,0,7716,3300,1650,2604,5456,1000,330,650,85,42,3,0,0],
+    ["M","Aranha Maligna",220,437031,0,8641,6000,1700,1457,4411,1000,0,0,90,45,0,0,0],
+    ["M","Lobo Maligno",220,500,0,8641,5000,1600,1880,6786,3000,50000,0,0,0,99,0,0],
+    ["M","Pesquisador",220,437031,0,8178,3500,1750,2679,5768,1000,345,750,90,45,5,0,0],
+    ["M","4º Membro do Saber Insano",215,431272,0,8170,3600,1800,2697,5790,1000,350,800,85,42,6,0,0],
+    ["M","3º Membro do Saber Insano",210,413400,0,7712,3400,1700,2576,5480,1000,340,700,80,40,4,0,0],
+    ["M","2º Membro do Saber Insano",205,395903,0,7265,3200,1600,2457,5177,1000,320,600,75,37,2,0,0],
+    ["M","1º Membro do Saber Insano",200,378780,0,6830,3000,1500,2340,4881,1000,300,500,70,35,0,0,0],
+    ["M","Espírito Vingativo",200,382568,0,6973,3100,2050,2385,4987,1000,310,550,70,35,1,0,0],
+    ["M","Espadachim Abandonado",195,369420,0,6129,2500,1800,2314,4800,1000,300,500,65,32,0,0,0],
+    ["M","Arqueiro Abandonado",195,332478,0,6686,3000,2000,2136,4383,1000,100,400,65,32,0,0,0]
+  ]],
+  ["Torre Diabólica", [
+    ["C","Perverso Rei Nix",250,3023232,4000,7581,3000,1300,3000,5477,1375,345,300,0,30,5,5,5],
+    ["C","Perverso Rei Nix",250,1763552,4000,7581,3000,1300,2400,5477,1375,345,300,0,30,5,5,5],
+    ["C","Comandante Supremo do Exército do Diabo Demonz",220,1376301,10000,12344,7000,1650,2632,8766,1100,500,500,0,100,10,20,13],
+    ["C","General Diabólico Carthus",220,1220912,6000,9011,4500,1789,2820,5552,1270,567,500,0,50,10,10,10],
+    ["C","Observador Maligno Kirinto",250,1007744,10000,8615,3400,2550,1500,4350,1375,0,0,0,60,5,12,7],
+    ["C","Comandante Supremo do Exército do Diabo Demonz",220,843539,5000,12344,7000,1650,2350,8766,1100,500,500,0,100,10,15,10],
+    ["C","Comandante Supremo do Exército do Diabo Demonz",220,776944,6000,12344,7000,1650,1880,8766,1100,500,500,0,100,10,18,10],
+    ["C","Comandante Supremo do Exército do Diabo Demonz",220,710349,2000,12344,7000,1650,1880,8766,1100,500,500,0,100,10,15,10],
+    ["M","Natureza das Trevas - Arrogância Elite",225,453952,0,7393,1400,1200,950,4755,500,250,0,0,47,1,0,0],
+    ["M","Natureza das Trevas - Inveja Elite",225,453952,0,7393,1400,1200,950,4755,500,250,0,0,47,1,0,0],
+    ["M","Natureza das Trevas - Fúria Elite",225,453952,0,7393,1400,1200,950,4755,500,250,0,0,47,1,0,0],
+    ["M","Natureza das Trevas - Cobiça Elite",225,680928,0,7393,1400,1200,1140,4755,500,250,0,0,47,1,0,0],
+    ["M","Exército do Diabo natureza das trevas - Fúria Elite",225,272371,0,7393,1400,1200,1140,4755,500,250,0,0,47,1,0,0],
+    ["M","Jason Demoníaco da Torre Diabólica",225,85116,0,6653,225,225,1520,1848,500,240,0,0,0,0,0,0],
+    ["M","Alis Demoníaco da Torre Diabólica",225,85116,0,6653,225,225,1520,1848,500,180,0,0,0,0,0,0],
+    ["M","Cavaleiro da Morte da Torre Diabólica",225,127674,0,6292,225,225,1520,2297,500,0,0,0,0,0,0,0],
+    ["M","Duelista da Morte da Torre Diabólica",225,127674,0,3744,225,225,1520,2297,500,0,0,0,0,0,0,0],
+    ["M","Mago da Morte Ancião da Torre Diabólica",225,248255,0,5322,225,270,1425,1294,500,88,0,0,0,0,0,0],
+    ["M","Incubus Sedutor",225,170232,0,7983,174,174,1045,2144,500,100,0,0,0,0,0,0],
+    ["M","Sucubus Sedutor",225,170232,0,7983,175,175,1425,4620,500,100,0,0,0,0,0,0],
+    ["M","Escravo Deslumbrado",225,262441,0,6653,225,225,1900,1848,500,30,0,0,0,0,5,3],
+    ["M","Vampiro Maligno",225,283720,0,7865,225,225,1378,2297,500,20,0,0,0,0,5,3],
+    ["M","Dama Sangrenta Maligna",225,283720,0,7865,225,225,1378,2297,500,40,0,0,0,0,5,3],
+    ["M","Espírito Negro da Torre Diabólica",200,159088,0,3654,200,200,1260,2068,500,100,0,0,0,0,0,0],
+    ["M","Cavaleiro Guardião Líder Maligno",200,909072,0,3131,300,240,1530,2737,500,0,0,70,35,0,0,0]
+  ]],
+  ["Arena do Caos Nv.7", [
+    ["C","Dr. Mazel do Caos",235,2606560,0,6859,5000,2500,2425,5837,1322,500,0,0,52,10,40,20],
+    ["M","Bargan do Caos",230,360275,0,5771,1700,500,1920,3405,500,130,200,100,50,5,20,10],
+    ["M","Enth do Caos",225,340464,0,5663,1600,500,1900,3216,500,120,200,95,47,5,20,10],
+    ["M","Charayan do Caos",220,322571,0,5555,1500,500,1880,3031,500,110,200,90,45,5,20,10],
+    ["M","Tenneth do Caos",215,380414,0,5810,1800,500,1953,3608,500,140,200,85,42,7,20,10],
+    ["M","Lobo Gigante do Caos",210,275600,0,5368,1400,500,1702,2806,500,90,200,80,40,5,15,7],
+    ["M","Fúria do Caos",205,304043,0,5434,1400,500,1729,2912,500,100,200,75,37,5,15,7],
+    ["M","Darksha do Caos",200,224680,0,5265,1300,500,1575,2716,500,60,200,70,35,5,15,7],
+    ["M","Cryonics do Caos",195,251206,0,5293,1200,500,1602,2630,500,70,200,65,32,5,10,5],
+    ["M","Borboleta do Caos",190,235239,0,5179,1100,500,1584,2544,500,60,200,60,30,5,10,5],
+    ["M","Panda Lesser do Caos",185,215681,0,5065,1000,500,1566,2420,500,50,200,55,27,5,10,5]
+  ]],
+  ["Arena de Acheron", [
+    ["C","Grande Guerreiro Detestatus",220,2102188,6000,9011,4500,1789,2820,5552,1270,567,500,0,50,10,10,10],
+    ["C","Observador Guoicpeta",210,1049400,0,6525,3000,1300,2760,4797,1235,345,300,0,30,5,5,5],
+    ["C","Gerente UrosKenta",210,914250,3000,7118,3500,1250,2668,4233,1235,234,300,0,20,5,5,5],
+    ["M","Mágico Mestre Corrompido Elite",205,400560,1000,7265,1500,1700,1820,3020,500,56,0,75,10,2,0,0],
+    ["M","Espectro do Espadachim Corrompido",200,378780,0,5692,1500,1500,1350,3183,500,0,0,70,0,0,0,0],
+    ["M","Mágico Negro Corrompido",200,240147,0,7115,1500,1000,1350,2546,500,0,0,70,0,0,0,0],
+    ["M","Espectro do Mágico Corrompido",195,206875,0,4179,1500,1000,1068,2087,500,0,0,65,0,0,0,0],
+    ["M","Espectro do Espadachim Insano",195,206875,0,4179,1000,500,1780,2087,500,0,0,65,0,0,0,0],
+    ["M","Espectro do Mágico Derrotado",190,200913,0,6542,1500,1300,1003,2462,500,0,0,60,0,0,0,0],
+    ["M","Espectro do Espadachim Derrotado",190,230438,0,5997,1000,900,1320,3078,500,0,0,60,0,0,0,0],
+    ["M","Espectro do Lutador Derrotado",190,260683,0,6542,1500,1300,1760,3283,500,56,0,60,0,0,0,0],
+    ["M","Espectro do Guerreiro Derrotado",190,331255,200,5997,1000,900,3080,3694,500,123,0,60,10,2,1,0],
+    ["M","Espectro do Espadachim Liberado",190,201634,0,2726,1000,500,1936,2052,500,0,0,60,0,0,0,0]
+  ]],
+  ["Castelo das Ilusões (Apócrifos)", [
+    ["C","Mago Divino da Ilusão Corrompido",230,1217832,0,7053,2560,1650,1920,4533,1000,345,750,0,50,0,0,0],
+    ["C","Pesquisador Divino Deslumbrado",220,915684,5000,7715,3500,1550,1410,4383,1000,345,750,0,45,5,0,0],
+    ["C","Faello Divino da Ilusão Corrompido",230,811888,10000,8015,2500,1550,2880,6951,500,300,500,0,50,10,0,0],
+    ["C","Mago Orc Divino da Ilusão Corrompido",215,325488,0,7262,2200,1450,2232,4595,500,385,750,0,42,9,0,0],
+    ["C","Guerreiro Orc Divino da Ilusão Corrompido",215,282090,0,6657,2200,1350,2418,4308,500,400,750,0,42,9,0,0],
+    ["M","Golem da Ira Divino Elite",225,1929296,5000,9753,5000,2500,2660,5944,1287,700,500,0,47,15,0,0],
+    ["M","Gárgula Divino da Ilusão Corrompida",215,203430,0,6657,1800,1100,1860,4454,500,341,500,85,42,0,0,0],
+    ["M","Ogre Divino da Ilusão Corrompido",215,341762,0,6960,2000,1150,2232,4009,0,341,500,85,42,0,0,0],
+    ["M","Zumbi Divino da Ilusão Corrompido",215,245490,0,6657,2000,1100,1674,4009,500,288,500,85,42,0,0,0],
+    ["M","Zumbi Guerreiro Divino da Ilusão Corrompido",215,245490,0,6960,2000,1200,2046,4009,500,288,500,85,42,0,0,0],
+    ["M","Orc Divino da Ilusão Corrompido",215,284802,0,6960,2800,1300,2418,5122,500,400,750,85,42,5,0,0],
+    ["M","Sacerdote Minota da Ilusão Corrompido",215,341762,0,6657,2400,1250,2790,3341,500,400,0,85,42,9,0,0]
+  ]],
+  ["Celestia", [
+    ["C","Guardião do Vazio Perius",250,26479733,110000,34460,20000,2600,6500,15079,1500,1300,1200,450,500,45,450,95],
+    ["M","Aion que esqueceu a verdade",250,21615922,90000,34460,15000,2300,6000,16439,1700,1150,1750,350,420,38,380,85],
+    ["M","Abismo Furioso Vitos",250,23134539,100000,34460,14000,2150,5500,15079,1700,1050,1600,320,375,35,350,80],
+    ["M","Experimento Enfraquecido MONAD",245,17665566,60000,34460,12000,1800,4800,11019,1700,800,1200,200,275,25,300,70],
+    ["M","Experimento FLA-3751",245,18159360,70000,34460,12500,1900,5000,12083,1500,850,1300,230,300,27,315,72],
+    ["M","Experimento de Conjunto MONAD",245,19653155,80000,34460,13000,2000,5200,13114,1700,900,1400,260,325,29,330,74],
+    ["M","Buscador Assistente",240,5882128,0,14587,11000,1950,4512,11543,1500,730,1375,220,210,22,210,51],
+    ["M","Servo do Abismo",240,5967376,0,16030,13000,2200,4944,13059,1500,740,1500,250,280,25,240,60],
+    ["M","Pluma de Ergon",240,5048924,0,20038,18000,2500,6509,17024,1500,900,2000,400,500,30,350,80],
+    ["M","Fragmento da MONAD",230,5201773,0,13145,9000,1850,4320,10494,1500,710,1150,200,200,20,190,50]
+  ]],
+  ["Crista Ilusória", [
+    ["C","Calligo Tempus o Imortal e Eterno",235,3791360,19200,9798,5592,2350,3007,8602,1500,650,500,0,52,8,0,0],
+    ["C","Calligo Thanatos Eterno",250,2078472,0,8615,3400,2550,2500,5800,1375,0,0,0,60,15,30,15],
+    ["C","Asa do Mal Hyperion",230,811888,10000,8015,2500,1900,2880,6044,500,300,500,0,50,13,0,0],
+    ["C","Fantasma Negro Assassino",240,665368,0,6985,2800,1800,2744,4683,1340,350,500,0,55,10,0,0],
+    ["C","Casa Fantasma 2",100,364002,3000,4168,3400,2550,1400,3100,850,0,0,0,0,30,0,0],
+    ["C","Casa Fantasma 3",100,364002,3000,4168,3400,2550,1400,3100,850,0,0,0,0,30,0,0],
+    ["C","Defensor Morto-Vivo",230,324755,0,6412,2400,1400,2880,6044,1305,200,500,0,50,12,0,0],
+    ["C","Guerreiro Ghoul Fantasma",230,289960,0,6412,2600,1450,2880,4835,1305,340,500,0,50,5,0,0],
+    ["M","Zehgo da Ambição Elite",250,2141456,0,7581,2500,1650,2800,6180,500,300,700,120,60,10,20,10],
+    ["M","Defensor Morto-Vivo Fantasma Elite",230,579920,0,6733,2500,1650,3360,4431,500,300,700,100,50,10,0,0],
+    ["M","Mulher Zumbi Poderosa",230,208771,5000,5771,8000,1350,2400,2332,0,500,0,100,0,10,0,0],
+    ["M","Esqueleto Mego do ódio",215,379736,0,6170,2200,1400,2232,3776,500,40,0,0,0,0,0,0],
+    ["M","Assassino Congelado de Gelo",200,767661,0,5977,1500,1300,1170,4627,500,100,0,70,35,3,0,0],
+    ["M","Guerreiro Flamejante de Fogo",200,767661,0,5977,1500,1300,1170,4627,500,100,0,70,35,3,0,0]
+  ]],
+  ["Desfiladeiro Congelado", [
+    ["C","Nazabrum Repremidor de Alma",250,3401136,20000,9821,6500,2800,3200,8377,1375,450,900,0,60,20,40,20],
+    ["C","Vashirr",240,2734058,8000,9246,4500,2600,2891,7493,1340,400,750,0,55,15,35,17],
+    ["C","Braço Esquerdo do Diabo",240,2734058,9000,9246,4500,2600,2891,7493,1340,400,750,0,55,15,35,17],
+    ["C","Ridruth",245,2666995,0,8973,4200,2500,2970,7771,1357,400,750,0,57,12,30,15],
+    ["C","Lezaar",240,2346934,10000,8648,3800,2550,2842,5885,500,380,700,0,55,12,30,15],
+    ["M","Guardião Frio do Gelo",230,469735,0,7855,2900,1550,2784,5480,500,300,600,100,50,5,0,0],
+    ["M","Buscador de Almas Original",225,159626,0,7393,2800,1450,2518,5053,500,340,500,95,47,5,0,0],
+    ["M","Crânio Esquelético Congelado",225,442603,0,7487,2900,1400,2565,5283,500,350,500,95,47,5,0,0],
+    ["M","Golem de Carne do Rancor",220,449518,0,7406,2600,1200,2632,4976,500,280,500,90,45,5,0,0]
+  ]],
+  ["Ilha da Miragem", [
+    ["C","Governante da Ilha Bariald",260,16239040,50000,10520,10000,2600,4284,9634,1410,700,700,0,180,20,180,50],
+    ["C","Golem Guardião do Templo",250,15116160,16000,9821,9000,1900,4100,9505,1375,630,500,0,110,10,120,40],
+    ["C","Vigilante Darthpencio",255,14901824,40000,10167,9500,2400,4040,9325,1392,660,650,0,150,15,150,45],
+    ["C","Garliardo",250,12218896,20000,9649,8600,2200,3800,9183,1375,600,600,0,130,12,100,40],
+    ["C","Crasio",240,10161984,17000,9479,8000,2000,3626,9054,1340,560,500,0,80,10,80,35],
+    ["C","Gorgue Destruidor",245,9260400,13000,9481,8200,1800,3465,8882,1357,520,550,0,70,10,70,30],
+    ["C","Gorgue Assassino",245,9260400,13000,9481,8200,1800,3465,8882,1357,520,550,0,70,10,70,30],
+    ["C","Vigilante Tolerante",240,8589296,15000,9313,7500,1500,3430,8898,1340,500,500,0,60,10,50,25],
+    ["M","Bargan",230,826386,0,6893,3200,1300,2688,6413,500,400,500,60,30,5,0,0],
+    ["M","Grell",230,782892,0,7374,3500,1500,2592,6180,500,370,500,90,50,3,0,0],
+    ["M","Caranguejo Disforme Mutante",220,732547,0,6789,3200,1300,2491,5881,500,380,500,70,35,3,0,0],
+    ["M","Caranguejo de Fronteira",220,715898,0,7098,3300,1400,2397,5655,500,350,500,80,40,2,0,0],
+    ["M","Guardião Char Chor",220,482815,0,6172,2500,500,1880,4524,500,0,0,90,20,0,0,0]
+  ]],
+  ["Ilha da Miragem (Desperta)", [
+    ["C","Controlador do Templo Chefe Laxar",250,37790400,125000,14818,13000,2200,5200,11277,1375,1000,1600,350,350,30,350,80],
+    ["C","Destruidor Ageluth",250,35271040,90000,13784,12500,2000,4900,10955,1375,900,1500,300,300,27,350,80],
+    ["C","Dispencio Desperto",250,34011360,85000,12923,12000,1800,4750,10633,1375,900,1400,275,250,25,320,75],
+    ["C","Tolerante Desperto",245,33337440,80000,12698,11000,1700,4851,9516,1357,800,1300,250,200,25,275,75],
+    ["C","Bariald Desperto",250,32751680,70000,12061,10000,1700,5000,10310,1375,800,1200,200,250,25,350,85],
+    ["C","Crasio Desperto",240,32663520,70000,12473,10000,1600,4655,9210,1340,700,1200,180,200,20,275,75],
+    ["C","Guardião Golem Desperto",230,30155840,5000,11221,8500,1500,4032,9066,1305,500,1000,150,200,12,160,60],
+    ["C","Garliardo Desperto",235,28435200,60000,11431,8000,1500,4462,8909,1322,700,1000,150,200,15,240,65],
+    ["C","Gorgue Desperto",230,25516480,40000,11221,7500,1400,4416,9066,1305,600,900,100,200,15,220,65],
+    ["C","Gorgue Desperto",230,24356640,40000,11221,7500,1500,4416,9066,1305,600,800,150,200,10,220,65],
+    ["M","Bargan Desperto Gigante",250,1511616,0,15093,10000,2500,5000,9988,1375,900,1400,250,250,15,250,100],
+    ["M","Guardião Ancião",250,2456376,0,172300,20000,2000,4200,9988,1375,600,1400,150,150,15,100,50],
+    ["M","Guardião da Torre",250,4534848,0,172300,20000,0,4300,9988,1375,700,1400,150,175,17,100,50],
+    ["M","Guardião da Torre",250,5574084,0,172300,20000,0,4300,9988,1375,700,1400,150,175,17,100,50],
+    ["M","Guardião da Torre",250,3590088,0,172300,20000,0,4300,9988,1375,700,1400,150,175,17,100,50],
+    ["M","Caranguejo de Fronteira Rei Desperto",240,1179516,0,9313,4500,2200,4410,9678,1340,500,1000,150,150,10,200,60],
+    ["M","Orbe Relampejante",240,1270248,0,12306,9000,1000,2989,9678,1340,700,900,0,115,5,40,20],
+    ["M","Caranguejo Disforme Rei Desperto",240,1179516,0,9313,4500,2200,4410,9678,1340,500,1000,150,150,10,200,60],
+    ["M","Bargan Desperto",240,1270248,0,13637,9000,2000,4410,9678,1340,800,1200,200,200,10,200,90],
+    ["M","Grell Desperto",230,1043856,0,8977,4000,1800,3840,9368,1305,350,700,110,110,5,40,20],
+    ["M","Bargan Desperto",230,1043856,0,8977,4000,1800,3840,9368,1305,350,700,110,110,5,150,60],
+    ["M","Caranguejo de Fronteira Desperto",230,1043856,0,8977,4000,1800,3840,9368,1305,350,700,110,110,5,100,40],
+    ["M","Orbe Relampejante",230,1043856,0,11862,7500,1000,2928,9368,1305,600,750,0,90,5,30,15],
+    ["M","Caranguejo Disforme Desperto",230,1043856,0,8977,4000,1800,3840,9368,1305,350,700,110,110,5,100,40],
+    ["M","Orbe de Fogo",220,832440,0,9875,5000,1000,2867,9058,1270,500,600,80,80,5,40,10],
+    ["M","Orbe de Água",220,832440,0,9875,5000,1000,2867,9058,1270,500,600,80,80,5,40,10],
+    ["M","Orbe Amaldiçoada",220,1248660,0,9258,7000,1500,2867,9058,1270,550,800,100,90,10,60,20],
+    ["M","Orbe Relampejante",220,832440,0,11418,5000,1000,2867,9058,1270,500,600,0,75,5,20,10]
+  ]],
+  ["Jardim Decadente", [
+    ["C","Katus de Espinho Contaminado",250,19348685,30000,11716,9700,2800,4000,9505,1375,500,750,0,60,21,80,40],
+    ["C","Terra e Vento de Zaishu",250,18744038,26000,11372,9200,2750,3900,9344,1375,480,740,0,60,18,72,36],
+    ["C","Espirito do Selo Morsphira",250,18643264,18000,12061,7900,2600,3850,9666,1375,450,730,0,60,15,56,28],
+    ["C","Vigilante do Vento e da Terra",250,17685907,20000,11544,8400,2600,3800,9022,1375,450,725,0,60,15,60,30],
+    ["C","Experimento Falho HTH-401",250,17308003,20000,11372,8200,2500,3750,8861,1375,440,720,0,60,15,60,30],
+    ["C","Espirito do Selo Morsphira",240,15920442,15000,10477,7700,2400,3528,8117,1340,420,700,0,55,12,48,24],
+    ["C","Zardinia do Jardim Rochoso",230,15449069,13000,10259,7200,2300,3360,7857,1305,400,690,0,50,10,40,20],
+    ["M","Senhor da Rocha Einrocksia (Elite)",230,4824934,10000,9939,5500,2200,3072,7229,500,400,690,100,50,10,0,0],
+    ["M","Serbat Fugitivo do Experimento (Elite)",230,5056902,13000,9939,5800,2300,3168,7229,500,410,700,100,50,10,0,0],
+    ["M","Purstar (Elite)",225,4539520,8000,9753,5200,2100,2945,6891,500,370,680,95,47,8,0,0],
+    ["M","Phoebe S do Experimento Abandonado (Elite)",215,4079450,5000,9532,5000,2000,2697,6681,500,350,650,85,42,7,0,0],
+    ["M","Phoebe J do Experimento Abandonado (Elite)",215,4079450,5000,9532,5000,2000,2697,6681,500,350,650,85,42,7,0,0],
+    ["M","Jayrion Fugitivo do Experimento",225,1097996,0,9595,3600,1800,2708,5857,500,330,690,95,47,3,0,0],
+    ["M","Servo Furioso da Terra",220,1061361,0,9104,3300,1750,2632,5542,500,310,650,90,45,3,0,0],
+    ["M","Lobo do Vento Furioso",220,1069685,0,9412,3400,1800,2679,5768,500,320,680,90,45,3,0,0],
+    ["M","Servo Furioso da Terra",220,1019739,0,9104,3300,1750,2632,5542,500,310,650,90,45,3,0,0],
+    ["M","Lobo do Vento Furioso",220,1028063,0,9412,3400,1800,2679,5768,500,320,680,90,45,3,0,0],
+    ["M","Espirito do Jardim Contaminado",215,1033424,0,9078,3150,1650,2558,5456,500,300,620,85,42,3,0,0],
+    ["M","Espirito do Jardim Contaminado",215,992738,0,9078,3150,1650,2558,5456,500,300,620,85,42,3,0,0],
+    ["M","Servo da Terra Contaminado",210,993750,0,8898,3100,1600,2484,5261,500,290,600,80,40,3,0,0],
+    ["M","Lobo do Vento Contaminado",210,1001700,0,8898,3200,1650,2576,5480,500,300,630,80,40,3,0,0],
+    ["M","Darksha do Experimento Abandonado",210,1001700,0,8898,3400,1700,2484,5370,500,300,600,80,40,3,0,0],
+    ["M","Servo da Terra Contaminado",210,954000,0,8898,3100,1600,2484,5261,500,290,600,80,40,3,0,0],
+    ["M","Lobo do Vento Contaminado",210,961950,0,8898,3200,1650,2576,5480,500,300,630,80,40,3,0,0]
+  ]],
+  ["Laboratório Automata", [
+    ["C","Turmacan",250,54040272,180000,34460,20000,2600,7800,21012,1700,1300,2200,450,600,45,490,115],
+    ["C","Turmacan",250,44088800,150000,34460,18000,2000,7500,18540,1700,1200,1950,400,550,41,450,110],
+    ["C","Gigantis",250,42073312,140000,34460,15000,2300,7200,16439,1700,1150,1750,350,520,38,420,105],
+    ["C","Lysekna",250,42073312,140000,34460,17000,2300,7200,18664,1700,1150,1850,380,525,39,430,106],
+    ["C","Arca",250,40057824,130000,34460,16000,2200,6900,17551,1700,1100,1700,360,500,37,405,102],
+    ["C","Vizerd",250,39050080,120000,34460,14000,2150,6600,15079,1700,1050,1600,320,475,35,390,100],
+    ["C","Bull-Katos",250,37034592,110000,34460,13500,2100,6480,14016,1700,950,1500,300,450,31,385,96],
+    ["C","Geranakh",250,36026848,100000,34460,13000,2000,6240,13114,1700,900,1400,260,425,29,370,94],
+    ["C","Tarast",250,35019104,90000,34460,12500,1900,6000,12083,1500,850,1300,230,400,27,355,92],
+    ["C","Duque de Ferro MA-10",250,34011360,80000,34460,12000,1800,5760,11019,1700,800,1200,200,375,25,340,90],
+    ["C","Vizen",230,3009790,0,20038,18000,2500,6509,17024,1500,900,2000,400,500,30,350,80],
+    ["C","Gerador de Energia",230,2400870,0,32060,30000,2400,5011,5014,500,800,1700,350,400,25,300,70],
+    ["C","Gerador de Energia",230,2209496,0,32060,13500,2350,5251,5014,500,750,1600,325,325,23,290,65],
+    ["C","Torreta de Laser",230,2209496,0,20038,14000,2400,5520,15041,1500,750,1800,350,350,25,300,70],
+    ["C","Torreta de Mísseis",230,2209496,0,20038,14000,2400,5520,15041,1500,750,1800,350,350,25,300,70],
+    ["C","MA-09 Poerte",230,2000730,0,20038,8000,2350,4800,14015,1500,800,1700,350,150,23,300,60],
+    ["C","Torreta de Laser",230,2000730,0,20038,13500,2350,5251,15041,1500,750,1600,325,325,23,290,65],
+    ["C","FP-02 Hegnos Penna",230,1809351,0,18114,13000,2250,5520,14575,1500,740,1550,270,320,23,300,56],
+    ["C","Bobina de Tesla",230,1809351,0,19076,12500,2250,4752,14575,1500,730,1550,275,275,22,250,57],
+    ["C","Torreta de Laser",230,1809351,0,19076,12500,2250,4752,14575,1500,730,1550,275,275,22,250,57],
+    ["C","ARM-06 Espada",230,1680610,0,18114,12000,2200,5251,14015,1500,730,1500,250,280,21,260,54],
+    ["C","Gerador de Energia",230,190504,0,19076,13000,2300,5011,5014,500,740,1500,300,300,21,275,58],
+    ["C","Gerador de Energia",230,175020,0,32060,30000,2100,4502,5014,500,730,1400,225,275,20,250,56],
+    ["M","MA-09 Poerte",230,1600580,0,13145,8500,1800,4320,10494,1500,700,1200,200,200,20,200,50],
+    ["M","TA-01 Rotta",230,1640600,0,13145,9500,1850,4416,10028,1500,720,1200,200,200,20,200,50],
+    ["M","ARM-04 Tricrus",230,1400510,0,13145,9000,1850,4320,10494,1500,710,1150,200,200,20,190,50],
+    ["M","Lihonar Mecânico",230,1680610,0,14106,11000,1900,4416,11077,1500,730,1250,210,200,20,210,51],
+    ["M","Torreta de Mísseis",230,1640600,0,14106,10000,1900,4368,11077,1500,710,1300,200,200,20,210,50],
+    ["M","Gerador de Energia",230,1640600,0,32060,30000,1850,4368,5014,500,720,1300,200,200,20,210,50],
+    ["M","Leão Mecânico",230,1680610,0,14587,11000,1950,4512,11543,1500,730,1375,220,210,22,210,51],
+    ["M","ARM-06 Espada",230,1809351,0,15068,12000,2200,4704,12010,1500,740,1400,230,230,24,220,52],
+    ["M","Bobina de Tesla",230,1600580,0,15068,12000,1900,4406,11543,1500,720,1350,200,190,20,210,50],
+    ["M","MA-03 Armun Rutile",230,1600580,0,15068,12000,1900,4406,12010,1500,720,1450,200,200,20,210,51],
+    ["M","MA-04 Armun Arter",230,1600580,0,15068,12000,1900,4406,12010,1500,720,1450,200,200,20,210,51],
+    ["M","MA-08 Redonno",230,164408,0,15549,11000,2100,4704,12593,1500,730,1400,200,220,21,220,54],
+    ["M","MA-08-Z Redonnotu",230,170497,0,16030,13000,2200,4944,13059,1500,740,1500,250,280,25,240,60],
+    ["M","Torreta de Mísseis",230,166147,0,17056,11500,2000,4406,12593,1500,720,1350,210,220,21,210,52],
+    ["M","Torreta de Laser",230,166147,0,17056,11500,2000,4406,12593,1500,720,1350,210,220,21,210,52],
+    ["M","Gerador de Energia",230,1809351,0,32060,30000,2100,4454,5014,500,720,1400,210,240,21,230,52],
+    ["M","Torreta de Mísseis",230,2209496,0,17056,12000,2100,4454,13059,1500,725,1400,220,240,22,230,54],
+    ["M","Torreta de Laser",230,2000730,0,17056,12000,2100,4406,13059,1500,725,1400,220,240,22,230,54],
+    ["M","Bobina de Tesla",230,2000730,0,17056,12000,2100,4406,13059,1500,725,1400,220,240,22,230,54],
+    ["M","Gerador de barreira",230,170497,0,17056,30000,0,0,5014,1500,725,1400,220,240,22,230,54]
+  ]],
+  ["Moinho Sagrado", [
+    ["C","Esfinge do Templo",250,3728653,24000,9304,6000,2700,3500,9022,1375,480,1000,0,60,22,45,22],
+    ["C","Anúbis Desperta",245,2963328,18000,8634,4500,2550,3218,8406,1357,450,700,0,57,18,38,19],
+    ["C","Anúbis Desperta",245,2839856,15000,8634,4200,2400,3218,8247,1357,430,700,0,57,15,35,17],
+    ["C","Anúbis Desperta Enfraquecida",240,2540496,12000,8149,3600,2200,2940,7649,1340,380,550,0,55,10,25,12],
+    ["C","Anúbis do Templo",240,2419520,10000,8315,3800,2350,2989,7805,1340,400,650,0,55,12,30,15],
+    ["M","Guerreiro Guardião do Templo",230,539326,0,7694,2800,1350,3072,6063,500,360,500,100,50,5,0,0],
+    ["M","Feiticeiro Guardião do Templo",230,487133,0,7855,2900,1550,2880,5480,500,300,600,100,50,5,0,0],
+    ["M","Feiticeiro Ahid",230,469735,0,7855,2900,1550,2784,5480,500,300,600,100,50,5,0,0],
+    ["M","Feiticeiro Isnan",230,469735,0,7855,2900,1550,2880,5480,500,300,600,100,50,5,0,0],
+    ["M","Feiticeiro Tahat",230,469735,0,7855,2900,1550,2880,5480,500,300,600,100,50,5,0,0],
+    ["M","Feiticeiro Arbaha",230,469735,0,7855,2900,1550,2880,5480,500,300,600,100,50,5,0,0],
+    ["M","Feiticeiro Hastha",230,469735,0,7855,2900,1550,2880,5480,500,300,600,100,50,5,0,0],
+    ["M","Guardião Armaku",225,493673,0,7708,2650,1250,2755,5513,500,300,500,95,47,5,0,0],
+    ["M","Cavalheiro Guardião do Templo",225,510696,0,7865,3000,1400,2945,5743,500,330,500,95,47,5,0,0],
+    ["M","Guardião Besouro",220,416220,0,7252,2500,1150,2444,4750,500,280,500,90,45,5,0,0],
+    ["M","Escorpião Sentinela",220,449518,0,7406,2600,1200,2632,4976,500,280,500,90,45,5,0,0],
+    ["M","Guardião Escorpião",220,449518,0,7406,2600,1200,2632,4976,500,280,500,90,45,5,0,0]
+  ]],
+  ["Pandemônio", [
+    ["C","O Rei do Inferno Nix",220,2297534,0,3086,1760,1800,1767,2922,1270,500,500,0,45,5,10,10],
+    ["C","Guardião do Inferno Manticore",215,1857452,0,3026,1720,1400,1628,4452,1252,200,400,0,42,2,10,10],
+    ["C","Aprisionado do Inferno Devrogan",215,1759805,3000,3026,1720,1500,1628,4595,1252,300,500,0,42,3,5,5],
+    ["C","Comandante do Inferno Demonz",215,1722916,0,3026,1720,1450,1628,2872,1252,250,300,0,42,1,5,5],
+    ["C","Observador Maligno Kirinto",210,1505200,0,2966,1680,1300,1564,4233,1235,150,300,0,40,1,2,2],
+    ["M","Guardião Diabólico Elite",190,270045,0,2726,285,228,1232,2668,500,0,0,60,30,0,0,0],
+    ["M","Lunática Diabólica Elite",185,210420,0,2666,277,222,1088,2521,500,0,0,55,27,0,0,0],
+    ["M","Cavaleiro Diabólico",190,230438,0,2726,285,228,1188,2462,500,0,0,0,0,0,0,0],
+    ["M","Fúria de Nix",190,180030,0,2726,285,228,1100,2360,500,0,0,60,30,0,0,0],
+    ["M","Arqueiro Diabólico",185,200600,0,2666,277,222,1044,2420,500,0,0,55,27,0,0,0],
+    ["M","Observador Diabólico",180,184324,0,2606,270,216,1118,2378,500,0,0,50,25,0,0,0],
+    ["M","Morcego Diabólico",180,170670,0,2606,270,216,1032,2378,500,0,0,50,25,0,0,0],
+    ["M","Lunático Diabólico",180,191150,0,2606,270,216,1032,2398,500,0,0,50,25,0,0,0],
+    ["M","Cão Diabólico",180,170670,0,2606,270,216,1032,2279,500,0,0,50,25,0,0,0],
+    ["M","Guerreiro Diabólico",180,184324,0,2606,270,216,1075,2418,500,0,0,50,25,0,0,0]
+  ]],
+  ["Salão Radiante do Castelo das Ilusões (Apócrifos)", [
+    ["C","K'enith Divino",250,2393392,3000,8615,3400,2550,1900,5800,1375,0,0,0,60,30,15,5],
+    ["C","Bigcrup Cuawan da Ira",250,881776,0,8960,4000,1700,2000,6444,1375,400,500,0,60,63,0,0],
+    ["C","Porteiro Ilusório",250,806195,16000,5514,8000,1450,2500,5191,0,500,0,120,0,10,0,0],
+    ["C","Guardião Arcano Ilusório",230,371149,0,6412,2600,1200,2784,5440,1305,500,500,0,50,7,0,0],
+    ["C","Guerreiro Ilusório",230,324755,0,6412,2400,1450,2688,4533,1305,340,500,0,50,5,0,0],
+    ["C","Espadachim Arcano Ilusório",230,266763,0,6412,2000,1400,2400,3022,1305,200,500,0,50,3,0,0],
+    ["C","Arqueiro Arcano Ilusório",230,255165,0,6412,2200,1400,2400,3324,1305,150,500,0,50,3,0,0],
+    ["C","Duelista Ilusório",230,231968,0,6412,2400,1450,2496,4533,1305,2,500,0,50,3,0,0],
+    ["C","Mago Ilusório",230,208771,0,6412,2600,1550,2400,3022,1305,350,500,0,50,3,0,0],
+    ["M","Volfid do Desespero",250,1889520,0,8615,2500,1650,2500,4697,500,300,700,120,60,10,0,0],
+    ["M","Maga Divina Corrompida",230,366509,0,6412,2200,1400,1056,3731,500,200,500,100,50,5,0,0]
+  ]],
+  ["Solo Flamejante", [
+    ["C","Demonio Groteus",250,3401136,20000,9821,6500,2800,3200,8377,1375,450,900,0,60,20,40,20],
+    ["C","Deusa Corrompida Keira",240,3007463,0,9246,4500,2600,2891,7493,1340,400,750,0,55,15,35,17],
+    ["C","Exército Treinador Flamejante",245,2666995,13000,8973,4200,2550,2970,7771,1357,400,750,0,57,12,30,15],
+    ["C","Diabo da Matança Wirynom",240,2346934,10000,8648,3800,2550,2842,7649,1340,380,700,0,55,12,30,15],
+    ["M","Guardião Flamejante Erka",230,1191736,5000,8015,3500,1700,2784,5830,500,350,600,100,50,5,0,0],
+    ["M","Minotauro Flamejante",225,459626,0,7393,2800,1450,2518,5053,500,340,500,95,47,5,0,0],
+    ["M","Demônio Guerreiro Flamejante",225,442603,0,7487,2900,1400,2565,5283,500,350,500,95,47,5,0,0],
+    ["M","Mal Flamejante Bapomat",220,416220,0,7406,2800,1400,2444,4750,500,320,500,90,45,5,0,0],
+    ["M","Diabinho Flamejante",220,366274,0,7715,3000,1500,2256,4524,500,300,500,90,45,0,0,0],
+    ["M","Guardião da Deusa Corrompida",220,424544,0,7098,3100,1420,2491,4976,500,330,500,90,45,5,0,0]
+  ]],
+  ["Templo Esquecido 3SS", [
+    ["C","Mazel Mutante",250,24437792,85000,11716,10500,3000,5000,10310,1100,800,1200,0,200,20,220,55],
+    ["C","Invencível James",240,21291776,70000,11308,8500,1950,4949,9366,1100,700,950,0,150,15,130,40],
+    ["C","Dr. Mazel",245,20990240,65000,10835,9500,2800,4455,9516,1100,750,1100,0,170,15,185,45],
+    ["C","A Última Chave Clicher",235,16587200,45000,10125,9000,2150,4753,9216,1100,650,1000,0,120,10,150,40],
+    ["C","Guardião do Templo Lmin",230,15077920,35000,9618,8000,1850,4032,9066,1100,650,900,0,100,12,100,35],
+    ["C","Asajin Perdida",225,11348800,25000,9438,7500,1750,3800,8916,1100,600,850,0,80,10,70,30],
+    ["C","Espécime JHK-0508",220,9989280,20000,9258,7000,1650,3384,8766,1100,500,800,0,60,10,50,25],
+    ["C","Arzip Copiado",220,998928,3000,4938,3650,1600,2162,3506,1270,0,0,0,45,0,0,0],
+    ["C","Laboratório Suspeito",205,269110,0,5458,2592,1800,1911,3846,200,80,500,0,0,0,0,0],
+    ["M","Phoebe S Elite",230,782892,0,8977,3800,1600,2928,7229,1000,320,600,100,50,2,0,0],
+    ["M","Phoebe J Elite",230,1739760,0,10900,3800,1600,2928,7229,1000,320,600,100,50,2,0,0],
+    ["M","Sekhmet Desperto Elite",230,2609640,0,11221,3200,1600,3840,5947,1000,320,600,100,50,2,0,0],
+    ["M","Sekhmet Elite",225,2553480,0,10696,3650,1600,3040,7121,1000,320,600,95,47,2,0,0],
+    ["M","Freki Elite",225,766044,0,8809,3800,1600,2898,7121,1000,320,600,95,47,2,0,0],
+    ["M","Cryonics",225,936276,6000,9438,3200,1600,2945,5857,1000,320,600,95,47,2,0,0],
+    ["M","Cryonics Recém Nascido",220,749196,6000,8641,3600,1600,2867,7012,1000,320,600,90,45,2,0,0],
+    ["M","Darksha",220,749196,0,8641,3650,1600,2867,7012,1000,320,600,90,45,2,0,0],
+    ["M","Almandine",220,749196,0,8641,3800,1600,2867,7012,1000,320,600,90,45,2,0,0],
+    ["M","Parafuso de Nymble",220,749196,0,8641,3200,1600,2867,7012,1000,320,600,90,45,2,0,0],
+    ["M","Espécime A Ingrozi",220,624330,0,3549,3650,1600,2162,2262,500,30,0,90,45,0,0,0],
+    ["M","Espécime B Macadum",220,624330,0,3549,3650,1600,2162,2262,500,280,0,90,45,0,0,0],
+    ["M","Guardião do Subterrâneo",220,998928,3000,3549,3650,1600,2538,2262,500,0,0,90,45,0,0,0]
+  ]],
+  ["Terminus Machina", [
+    ["C","Comandante Vizerd",250,3527104,22000,9477,6500,2800,3350,8764,1375,500,950,0,60,20,45,22],
+    ["C","FP-02 Hegnos Pena",245,3012717,17000,8973,5400,2650,3119,8089,1357,440,820,0,57,15,38,19],
+    ["C","Duque de Ferro MA-10",240,2855034,13000,8648,4600,2600,3038,7961,1340,460,760,0,55,15,35,17],
+    ["C","Vizen de Aço",240,2443715,9000,8481,3800,2500,2940,7805,1340,400,700,0,55,12,30,15],
+    ["M","MA-09 Poerte",230,517579,0,7855,2900,1450,2880,5713,500,350,500,100,50,5,0,0],
+    ["M","MA-08 Redonno",225,489417,0,7708,3000,1500,2803,5628,500,330,500,95,47,5,0,0],
+    ["M","ARM-06 Espada",225,497929,0,7708,2700,1400,2755,5513,500,320,500,95,47,5,0,0],
+    ["M","Lihonar Mecânico",220,470329,0,7406,2600,1300,2538,4976,500,300,500,90,45,5,0,0],
+    ["M","Leão Mecânico",220,482815,0,7561,2600,1350,2585,5090,500,290,500,90,45,5,0,0]
+  ]],
+  ["Torre Diabólica (Parte 2)", [
+    ["C","Perverso Rei Nix",250,3023232,4000,7581,3000,1300,3000,5477,1375,345,300,0,30,5,5,5],
+    ["C","O Comandante Supremo do Exército do Diabo Demonz Ressuscitado",250,2801528,10000,11372,6500,1700,3500,8055,1375,500,500,0,50,10,20,13],
+    ["C","O Comandante Supremo do Exército do Diabo Demonz Ressuscitado",250,2418586,5000,11372,6500,1700,3500,8055,1375,500,500,0,50,10,15,10],
+    ["C","O Comandante Supremo do Exército do Diabo Demonz Ressuscitado",250,2393392,5000,11372,6000,1650,3400,7894,1375,500,500,0,30,10,15,10],
+    ["C","General Diabólico Carthus Ressuscitado",250,2204440,5000,10338,4500,1800,3400,8055,1375,500,500,0,50,10,10,10],
+    ["C","Observador Maligno Kirinto Ressuscitado",250,2116262,0,8615,3400,2550,3400,7411,1375,300,500,0,50,5,15,10],
+    ["C","O Comandante Supremo do Exército do Diabo Demonz Ressuscitado",250,2065875,2000,11372,5000,1500,3300,7411,1375,500,400,0,10,10,10,10],
+    ["M","O Rei do Inferno Nix Ressuscitado (Elite)",250,4549964,8000,11716,7000,2200,3700,8377,1375,550,500,0,60,5,15,15],
+    ["M","Exército do Diabo natureza das trevas - Cobiça (Elite)",240,803281,0,9978,1400,1300,2744,5464,1340,300,0,0,30,1,0,0],
+    ["M","Exército do Diabo natureza das trevas - Arrogância (Elite)",235,651640,0,7675,1400,1200,2328,4915,1322,300,0,0,20,1,0,0],
+    ["M","Exército do Diabo natureza das trevas - Inveja (Elite)",235,651640,0,7675,1400,1200,2328,4915,1322,300,0,0,20,1,0,0],
+    ["M","Exército do Diabo natureza das trevas - Fúria (Elite)",235,651640,0,7675,1400,1200,2328,4915,1322,300,0,0,20,1,0,0],
+    ["M","O Rei do Inferno Nix Ressuscitado",245,987776,0,7788,367,294,2970,3899,500,50,0,0,30,0,0,0],
+    ["M","Guardião Chefe do Exército do Diabo Ressuscitado",245,981602,0,8465,367,294,2475,4387,500,50,0,0,30,0,0,0],
+    ["M","Guerreiro Ressuscitado do Exército Diabo",240,1043418,0,8648,360,288,2450,4324,500,200,0,0,0,0,0,0],
+    ["M","Lunático Diabólico do Exército do Diabo Ressuscitado",230,404494,0,5771,345,276,1920,3032,500,50,0,0,0,0,0,0],
+    ["M","Lunática Diabólica do Exército do Diabo Ressuscitada",230,404494,0,5771,345,276,1920,3032,500,50,0,0,0,0,0,0],
+    ["M","Cão do Exército do Diabo Ressuscitado",230,404494,0,5771,345,276,1920,3032,500,50,0,0,0,0,0,0],
+    ["M","Cavaleiro da Morte do Exército do Diabo Ressuscitado",230,413193,0,6412,345,276,2112,3148,500,50,0,0,0,0,0,0],
+    ["M","Duelista da Morte do Exército do Diabo Ressuscitado",230,413193,0,6412,345,276,2112,3148,500,50,0,0,0,0,0,0],
+    ["M","Mago da Morte do Exército do Diabo Ressuscitado",230,413193,0,6412,345,276,2112,3148,500,50,0,0,0,0,0,0],
+    ["M","Incubus do Exército do Diabo Ressuscitado",230,408844,0,8015,345,276,2400,3265,500,10,0,0,0,0,0,0],
+    ["M","Sucubus do Exército do Diabo Ressuscitado",230,408844,0,8015,345,276,2400,3265,500,10,0,0,0,0,0,0],
+    ["M","Olho do Observador Kirinto",230,347952,0,8015,345,276,2400,3265,500,50,0,0,0,0,0,0]
+  ]],
+  ["Torre dos Mortos 3SS (Parte 2)", [
+    ["C","Diablos Gelo e Fogo Desperto",250,31077760,999999,9941,8500,3000,3572,5711,500,700,0,0,0,30,0,0],
+    ["C","Diablos Gelo e Fogo",250,6298400,13000,8960,8500,3000,1700,6283,1375,700,0,0,60,15,0,0],
+    ["C","Keshapone Minisha do Desespero",250,3779040,12000,8960,7000,2500,1700,6283,1000,600,500,0,60,10,0,0],
+    ["C","Barlog do Inferno",230,3479520,8000,7694,4050,1565,1632,5893,1305,225,0,0,50,8,0,0],
+    ["C","Nazabrum Frio Implacável",210,2544000,5000,7415,3500,1400,1242,4656,1235,100,0,0,40,5,0,0],
+    ["C","Guardião Líder do Fogo",225,1248368,0,7393,4050,1565,1425,4364,500,225,0,0,50,8,0,0],
+    ["C","Vermelho",200,100,0,2846,0,0,900,2122,500,0,0,70,35,0,0,0],
+    ["C","Azul",200,100,0,2846,0,0,900,2122,500,0,0,70,35,0,0,0],
+    ["M","K'enith de Ambição (Elite)",250,4534848,13000,8960,6000,1000,1700,4820,800,500,0,120,60,10,0,0],
+    ["M","Dark Kimzark do Desespero (Elite)",247,1369104,0,8764,2500,1500,1690,4657,500,600,0,117,58,10,0,0],
+    ["M","Dark Kimzark do Desespero (Elite)",247,1369104,0,8764,2500,1000,1690,4657,500,600,0,117,58,10,0,0],
+    ["M","Essência do Desespero (Elite)",240,3387328,7000,9313,2500,1200,2450,5044,1500,550,500,110,55,10,0,0],
+    ["M","Tenneth Buerender do Desespero (Elite)",240,3387328,7000,9313,2500,1200,2450,5044,900,550,500,110,55,10,0,0],
+    ["M","Sábio Negro Arquimedes do Desespero (Elite)",240,3387328,7000,9313,2500,1200,2450,5044,1100,550,500,110,55,10,0,0],
+    ["M","Andreas Schultz do Desespero (Elite)",240,3387328,7000,9313,2500,1200,2450,5044,500,550,0,110,55,10,0,0],
+    ["M","Volfid do Desespero (Elite)",235,473920,0,8002,2500,1500,1455,4497,500,300,0,105,52,10,0,0],
+    ["M","Alis Demoníaco do Fogo (Elite)",225,1248368,0,7393,2500,1520,1425,4364,500,210,0,95,47,7,0,0],
+    ["M","Forma de Gelo e Fogo - Victoryan (Elite)",210,1060000,0,6525,1800,1500,1288,5080,500,150,0,80,40,5,0,0],
+    ["M","Orc Vigia de Gelo (Elite)",205,517520,0,6248,1700,1350,1229,3775,500,125,0,75,37,4,0,0],
+    ["M","Guardião Gelado de Gelo (Elite)",205,517520,0,6248,1700,1350,1229,3775,500,125,0,75,37,4,0,0],
+    ["M","Primeiro Cavaleiro de Gelo (Elite)",203,368986,0,5977,1500,1300,1170,4627,500,100,0,73,36,3,0,0],
+    ["M","Cavaleiro Flamejante de Fogo (Elite)",203,368986,0,5977,1500,1300,1170,4627,500,100,0,73,36,3,0,0],
+    ["M","Babayaga do Gelo (Elite)",195,197024,0,5711,1400,1150,1068,3339,500,0,0,65,32,1,0,0],
+    ["M","Babayaga do Fogo (Elite)",195,197024,0,5711,1400,1150,1068,3339,500,0,0,65,32,1,0,0],
+    ["M","Incubus do Desespero",250,25,0,4997,375,300,1100,2868,500,100,0,120,60,0,0,0],
+    ["M","Succubus do Desespero",250,25,0,4997,375,300,1100,6180,500,100,0,120,60,0,0,0],
+    ["M","Ibeltos de Ambição",250,2015488,0,7581,2500,1000,2400,4820,200,500,500,120,60,10,0,0],
+    ["M","Akenaph de Ambição",250,2015488,0,7581,2500,2500,2400,4820,500,650,0,120,60,10,0,0],
+    ["M","Centurião Prideus de Ambição",250,2519360,10000,8960,2500,1000,1800,5191,1160,500,0,120,60,10,0,0],
+    ["M","Dragão Antigo de Diablos",250,622687,7500,8960,8000,1000,1912,4573,0,500,0,120,0,10,0,0],
+    ["M","Sino Congelado de Diablos",250,3779040,7500,8960,8000,1000,1450,4573,500,500,0,120,60,10,0,0],
+    ["M","Arqueiro Negro do Desespero",245,1358192,0,8634,2500,1000,1485,4630,500,500,0,115,57,10,0,0],
+    ["M","Espírito Negro do Desespero",245,1358192,0,8634,2500,1000,1485,4630,500,500,0,115,57,10,0,0],
+    ["M","Cavaleiro Negro do Desespero",245,1358192,0,8634,2500,1000,1485,4630,500,500,0,115,57,10,0,0],
+    ["M","Praetor Essentia do Desespero",235,1303280,0,8002,2500,1000,1455,4497,500,410,0,105,52,10,0,0],
+    ["M","Lança do Tenneth Buerender do Desespero",235,1303280,0,8002,2500,1000,1455,4497,200,410,500,105,52,10,0,0],
+    ["M","Guardião de Arquimedes do Desespero",235,1303280,0,8002,2500,100,1455,4497,500,410,0,105,52,10,0,0],
+    ["M","Força Especial do Schultz do Desespero",235,1303280,0,8002,2500,1000,1455,4497,500,410,0,105,52,10,0,0],
+    ["M","Maga Eyagre do Desespero",233,1057248,0,7781,2500,1200,1256,4471,500,300,0,103,51,10,0,0],
+    ["M","Grudge Manifestado do Desespero",230,1159840,0,7694,1900,1000,1248,4431,500,80,0,100,50,5,0,0],
+    ["M","Agente do Fogo K'evin",225,1248368,0,7393,2500,1520,1425,4364,500,210,0,95,47,7,0,0],
+    ["M","Agente do Fogo K'evin",225,1248368,0,7393,2500,1700,1425,4364,500,210,0,90,45,7,0,0],
+    ["M","Demoníaco Jason do Fogo",220,1220912,0,7098,2500,1520,1410,4298,500,210,0,90,45,7,0,0],
+    ["M","Agente do Fogo K'evin Desperto",220,1109920,0,7098,2500,1000,1410,4298,500,210,0,80,40,10,0,0],
+    ["M","La Vestima de Fogo",220,1220912,0,7098,2500,1000,1410,4298,500,210,0,90,45,10,0,0],
+    ["M","Guardião do Fogo",220,1220912,0,7098,2500,1000,1410,4298,500,210,0,95,47,10,0,0],
+    ["M","Sino Ardente de Fogo",215,1139208,0,6809,2000,1520,1349,4120,500,200,0,85,42,7,0,0],
+    ["M","Sino Congelado de Gelo",215,1139208,0,6809,2000,1520,1349,4120,500,200,0,85,42,7,0,0],
+    ["M","Morcego Lâmina de Fogo",210,1000,0,6525,2500,1000,1380,4165,500,210,0,90,45,10,0,0],
+    ["M","Alma Ardente de Fogo - Ira",207,783720,0,6248,1800,1430,1229,4851,500,150,0,77,38,5,0,0],
+    ["M","Alma Congelada de Gelo - Medo",207,783720,0,6248,1800,1430,1229,4851,500,150,0,77,38,5,0,0],
+    ["M","Alma de Fogo do Pirata Queimado",205,776280,0,6248,1800,1430,1229,4851,500,150,0,75,37,5,0,0],
+    ["M","Alma de Gelo do Pirata Queimado",205,776280,0,6248,1800,1430,1229,4851,500,150,0,75,37,5,0,0],
+    ["M","Primeiro Cavaleiro de Gelo",203,368986,0,5977,1500,1300,1170,4627,500,100,0,73,36,3,0,0],
+    ["M","Cavaleiro Flamejante de Fogo",203,368986,0,5977,1500,1300,1170,4627,500,100,0,73,36,3,0,0],
+    ["M","Espectro Gélido de Gelo",203,717472,0,6139,1700,1350,1178,3643,500,125,0,73,36,4,0,0],
+    ["M","Corcel de Gelo",203,717472,0,6139,1700,1350,1178,3643,500,125,0,73,36,4,0,0],
+    ["M","Assassino Congelado de Gelo",200,767661,0,5977,1500,1300,1170,4627,500,100,0,70,35,3,0,0],
+    ["M","Guerreiro Flamejante de Fogo",200,767661,0,5977,1500,1300,1170,4627,500,100,0,70,35,3,0,0],
+    ["M","Guerreiro Congelado de Gelo",195,591072,0,5711,1500,1300,1113,4409,500,100,0,65,32,3,0,0],
+    ["M","Guerreiro Flamejante de Fogo",195,591072,0,5711,1500,1300,1113,4409,500,100,0,65,32,3,0,0],
+    ["M","Cachorro Flamejante de Fogo",190,480080,0,5452,1400,1150,1056,4195,500,0,0,60,30,1,0,0],
+    ["M","Cachorro Gélido de Gelo",190,480080,0,5452,1400,1150,1056,4195,500,0,0,60,30,1,0,0]
+  ]],
+  ["O Labirinto", [
+    ["C","Lumena, Luz do Julgamento",210,1272000,0,10381,5000,500,1840,4384,500,400,500,150,150,5,10,5],
+    ["C","Caligo, Sombra da Escuridão",210,1272000,0,10381,5000,500,1840,4384,500,400,500,150,150,5,10,5],
+    ["M","Fênix ressuscitada",210,954000,0,8898,2700,325,1656,3726,500,170,200,75,100,3,10,5],
+    ["M","Prerissa, a Encarnação do Gelo",205,983288,0,9590,2000,150,1729,3883,500,50,300,300,300,0,0,0],
+    ["M","Anúbis Guardião Espadachim",200,189390,0,9961,3000,150,1800,3183,500,50,150,50,50,0,5,3],
+    ["M","Anúbis Guardião Feiticeiro",200,189390,0,8823,3000,150,1800,3183,500,50,150,50,50,0,5,3],
+    ["M","Anúbis Guerreiro Guardião",200,189390,0,9107,3000,150,1890,3183,500,50,150,50,50,0,5,3],
+    ["M","Anúbis",200,606048,0,9961,2000,300,1980,3183,500,50,300,100,100,0,10,5],
+    ["M","Panda Lesser",200,151512,0,8538,2000,150,1800,2122,500,50,0,0,0,0,0,0],
+    ["M","Dragão Ancião",200,505040,0,4269,2000,150,1800,3183,500,50,200,75,75,0,0,0],
+    ["M","Anúbis Dourado",200,505040,0,5692,2000,150,1800,3183,500,50,200,75,75,0,0,0],
+    ["M","Demonio Groteus",200,505040,0,5692,2000,150,1800,3183,500,50,200,75,75,0,0,0],
+    ["M","Diabo da Matança Wirynom",200,505040,0,5692,2000,150,1800,3183,500,50,200,75,75,0,0,0],
+    ["M","Exército Treinador Flamejante",200,505040,0,5692,2000,150,1800,3183,500,50,200,75,75,0,0,0],
+    ["M","Governante da Ilha Bariald",200,505040,0,5692,2000,150,1800,3183,500,50,200,75,75,0,0,0],
+    ["M","Vigilante Dispensio",200,505040,0,5692,2000,150,1800,3183,500,50,200,75,75,0,0,0],
+    ["M","Garliardo",200,505040,0,5692,2000,150,1800,3183,500,50,200,75,75,0,0,0],
+    ["M","Classio",200,505040,0,5692,2000,150,1800,3183,500,50,200,75,75,0,0,0],
+    ["M","Tolerante",200,505040,0,5692,2000,150,1800,3183,500,50,200,75,75,0,0,0],
+    ["M","Golem Guardião do Templo",200,505040,0,5692,2000,150,1800,3183,500,50,200,75,75,0,0,0],
+    ["M","Gorgo Destruidor",200,505040,0,5692,2000,150,1800,3183,500,50,200,75,75,0,0,0],
+    ["M","Etherno Calligo Tempus",200,505040,0,5692,2000,150,1800,3183,500,50,200,75,75,0,0,0],
+    ["M","Diablos Gelo e Fogo",200,505040,0,5692,2000,150,1800,3183,500,50,200,75,75,0,0,0],
+    ["M","Dr.Mazel",200,505040,0,5692,2000,150,1800,3183,500,50,200,75,75,0,0,0],
+    ["M","James Invencível",200,505040,0,5692,2000,150,1800,3183,500,50,200,75,75,0,0,0],
+    ["M","O último Clicher de Chave",200,505040,0,5692,2000,150,1800,3183,500,50,200,75,75,0,0,0],
+    ["M","Elemental de Gelo",200,189390,0,9961,2000,200,1215,3183,500,50,100,50,0,0,5,3],
+    ["M","Guerreiro Ghoul",200,189390,0,9961,2000,200,1215,3183,500,50,100,50,0,0,5,3],
+    ["M","Defensor de Gelo",200,189390,0,9961,2000,200,1215,3183,500,50,100,50,0,0,5,3],
+    ["M","Guarda negro de gelo",200,189390,0,9961,2000,200,1215,3183,500,50,100,50,0,0,5,3],
+    ["M","Elevar",200,606048,0,9961,3000,300,1980,3183,500,50,200,100,100,0,10,10],
+    ["M","Bapomat",200,227268,0,9250,2000,150,1215,3183,500,50,150,0,0,0,0,0],
+    ["M","Sekhmet",200,227268,0,9961,2000,150,1620,3183,500,50,150,0,0,0,0,0],
+    ["M","Demônio Guerreiro",200,227268,0,8538,2000,150,1170,3183,500,50,150,0,0,0,0,0],
+    ["M","Demônio Pequeno",200,227268,0,9961,2000,150,1170,3183,500,50,150,0,0,0,0,0],
+    ["M","Thanatos",200,606048,0,9961,3000,150,1980,3183,500,50,200,0,0,0,0,0],
+    ["M","Guardião",200,227268,0,9250,2000,150,1215,3183,500,50,0,0,0,0,0,0],
+    ["M","Esquadrão de Insetos",200,189390,0,9107,2000,150,1170,3183,500,50,175,75,75,0,0,0],
+    ["M","Esquadrão de Armaku",200,208329,0,9392,2000,150,1260,3183,500,50,175,75,75,0,0,0],
+    ["M","Esquadrão de Escorpiões",200,227268,0,9676,2000,150,1350,3183,500,50,175,75,75,0,0,0],
+    ["M","Líquido venenoso de inseto - Larva",200,70,0,56920,20000,150,1170,3183,500,50,500,0,0,0,0,0],
+    ["M","Líquido venenoso de inseto - Crisálida",200,70,0,56920,20000,150,1170,3183,500,50,500,0,0,0,0,0],
+    ["M","Líquido venenoso de inseto - Adulto",200,70,0,56920,20000,150,1170,3183,500,50,500,0,0,0,0,0],
+    ["M","Rainha Endrienelle",200,808064,0,10530,4000,200,1800,3183,500,50,300,150,150,0,10,10],
+    ["M","Vice-Comandante do Esquadrão",200,265146,0,9961,2000,150,1350,3183,500,50,0,0,0,0,0,0],
+    ["M","Comandante do Esquadrão",200,265146,0,9961,2000,150,1350,3183,500,50,0,0,0,0,0,0],
+    ["M","Guardião Ancião - Destruição",200,404032,0,11384,4000,75,1800,3183,500,50,150,100,100,0,5,5],
+    ["M","Guardião Ancião - Caos",200,404032,0,9961,3000,75,1800,3183,500,50,150,100,100,0,5,5],
+    ["M","Guardião Ancião - Criação",200,404032,0,8538,2000,75,1800,3183,500,50,150,100,100,0,5,5],
+    ["M","Guardião",200,151512,0,56920,20000,150,1170,3183,500,50,0,0,0,0,0,0],
+    ["M","Golem Guardião",200,227268,0,9250,2000,150,1215,3183,500,50,50,50,50,0,0,0],
+    ["M","Guardião Gigante",200,227268,0,9961,2000,150,1620,3183,500,50,50,50,50,0,0,0],
+    ["M","Guardião Rei do Gelo",200,189390,0,11384,2000,150,1350,3395,500,50,75,75,75,0,0,0],
+    ["M","Prerissa, a Encarnação do Gelo",200,606048,0,7115,2000,150,1350,3183,500,50,150,150,150,0,0,0],
+    ["M","Guardião do Gelo",200,189390,0,9107,2000,150,1890,3183,500,50,50,50,50,0,0,0],
+    ["M","Fênix Asas de Fogo Vermelho",200,959576,0,9250,3000,350,1710,3820,500,200,300,75,100,5,10,5],
+    ["M","Carthus",200,606048,0,8538,2000,150,1170,3183,500,50,0,0,0,0,0,0],
+    ["M","Servo do Fogo",200,100000,0,8538,20000,150,1170,3183,500,50,0,0,0,0,0,0],
+    ["M","Espírito do Fogo",200,151512,0,8538,2000,150,1620,3183,500,50,50,50,50,0,0,0],
+    ["M","Espírito Gigante do Fogo",200,189390,0,9107,2000,150,1890,3183,500,50,75,75,75,0,0,0],
+    ["M","Minotauro",200,227268,0,8538,2000,150,1170,3183,500,50,100,100,100,0,0,0],
+    ["M","Espírito do Fogo",200,151512,0,8538,20000,150,1620,3183,500,50,0,0,0,0,0,0],
+    ["M","Dragão Guardião",200,227268,0,8538,2000,150,1170,3183,500,50,0,0,0,0,0,0]
+  ]],
+  ["Palestra Inferna", [
+    ["C","Groteus Implacável",250,22170368,0,33426,30000,4000,18700,29481,1375,2000,3000,600,700,50,600,120],
+    ["C","Golem Guardião Inquebrável",230,12758240,0,22442,20000,2500,10560,16470,1305,1300,2000,450,500,43,450,95],
+    ["C","Ultrajante Kimzark",200,8888704,0,15368,12000,1800,6030,9527,1200,600,1500,300,250,30,180,50],
+    ["C","Balrog Ultrajante",200,8888704,0,15368,12000,1800,6030,9527,1200,600,1500,300,250,30,180,50],
+    ["C","Berserker Detestatus",200,6262496,0,11099,7000,1500,3420,5444,1200,400,1000,200,100,26,110,35],
+    ["C","Berserker Detestatus",190,5722554,0,10495,7000,1400,3256,5244,1165,350,800,180,80,24,100,30],
+    ["C","Clichê Ultrajante",180,3804803,0,7818,5000,1200,1892,3279,1130,200,500,100,50,15,40,10],
+    ["M","Espírito da Terra Enfurecido",240,6387533,0,24612,24000,2900,12642,19817,500,1600,2400,510,580,46,520,105],
+    ["M","Furioso Espírito da Terra",240,6387533,0,24612,24000,2900,12642,19817,500,1600,2400,510,580,46,520,105],
+    ["M","Gárgula Servo Implacável",240,6786754,0,25610,26000,3200,13818,21858,500,1700,2600,540,620,47,560,110],
+    ["M","Gárgula de Pedra Implacável",240,6786754,0,25610,26000,3200,13818,21858,500,1700,2600,540,620,47,560,110],
+    ["M","Golem de Pedra Inquebrável",230,5549834,0,23404,22000,2700,11424,18073,500,1500,2200,480,540,45,480,100],
+    ["M","Golem de Aço Inquebrável",230,5549834,0,23404,22000,2700,11424,18073,500,1500,2200,480,540,45,480,100],
+    ["M","Mal - Arrogância",220,4911396,0,17899,18000,2200,8084,12667,500,1000,1800,420,440,39,350,80],
+    ["M","Mal - Ciúme",220,4911396,0,17899,18000,2200,8084,12667,500,1000,1800,420,440,39,350,80],
+    ["M","Mal - Ira",220,4911396,0,17899,18000,2200,8084,12667,500,1000,1800,420,440,39,350,80],
+    ["M","Mal - Ganância",220,4911396,0,17899,18000,2200,8084,12667,500,1000,1800,420,440,39,350,80],
+    ["M","Observador da Loucura",220,4212146,0,17899,18000,2200,8084,12667,500,1000,1800,420,440,39,350,80],
+    ["M","Guardião da Loucura",210,3060750,0,16016,14000,1900,6624,10522,500,800,1600,340,300,33,230,60],
+    ["M","Demônio Guerreiro da Loucura",210,3060750,0,16016,14000,1900,6624,10522,500,800,1600,340,300,33,230,60],
+    ["M","Arqueiro Negro da Loucura",210,3760350,0,16906,16000,2000,7360,11508,500,900,1700,380,360,36,290,70],
+    ["M","Espírito Sombrio da Loucura",210,3760350,0,16906,16000,2000,7360,11508,500,900,1700,380,360,36,290,70],
+    ["M","Poderoso Guardião Vulcânico",200,1545422,0,11099,8000,1500,3600,5729,500,400,1000,200,100,26,110,35],
+    ["M","Poderoso Guerreiro Pakss",200,1545422,0,11099,8000,1500,3600,5729,500,400,1000,200,100,26,110,35],
+    ["M","Poderoso Mago das Trevas",200,1666632,0,11669,9000,1600,4005,6260,500,450,1200,240,150,27,130,40],
+    ["M","Poderoso Guerreiro Karir",200,1666632,0,11669,9000,1600,4005,6260,500,450,1200,240,150,27,130,40],
+    ["M","Guerreiro do Espírito de Luta Jayrion",200,1833295,0,12238,10000,1700,4365,6897,500,500,1400,280,200,28,150,45],
+    ["M","Guerreiro do Espírito de Luta Serbat",200,2333285,0,12807,10000,1700,4860,7533,500,500,1400,280,200,28,150,45],
+    ["M","Guerreiro do Espírito de Luta Einrocksia",200,2333285,0,12807,10000,1700,4860,7533,500,500,1400,280,200,28,150,45],
+    ["M","Cão Vulcânico Ardente",190,928955,0,9268,6000,1300,2508,4309,500,300,650,160,65,22,80,25],
+    ["M","Elemental do Fogo Ardente",190,1224204,0,9268,6000,1300,2508,4309,500,300,650,160,65,22,80,25],
+    ["M","Lutador Jumar Karbo",180,778255,0,8339,5500,1250,2064,3568,500,250,550,120,55,17,50,15],
+    ["M","Ardente Lavestama",180,846523,0,8730,5500,1250,2236,3964,500,250,600,140,60,19,65,20]
+  ]],
+  ["Provação Infinita", [
+    ["C","Groteu da Provação",200,2626208,0,65458,50000,300,2070,3403,1200,80,0,0,0,2,5,3],
+    ["C","Zealru da Provação",200,1474717,0,65458,50000,300,1800,3403,1200,80,0,0,0,2,5,3],
+    ["C","Trugust da Provação",200,1474717,0,65458,50000,300,1800,3403,1200,80,0,0,0,2,5,3],
+    ["C","O Comandante da Provação Demonz",200,1474717,0,65458,50000,300,1800,3403,1200,80,0,0,0,2,5,3],
+    ["C","Wirynom da Provação",200,1151491,0,91072,50000,300,1530,3403,1200,80,0,0,0,2,5,3],
+    ["M","Bapomat da Provação",200,431809,0,65458,50000,300,1530,3077,500,80,0,0,0,2,5,3],
+    ["M","Minotauro da Provação",200,431809,0,65458,50000,300,1530,3077,500,80,0,0,0,2,5,3],
+    ["M","Pequeno Diabo da Provação",200,431809,0,65458,50000,300,1530,3077,500,80,0,0,0,2,5,3],
+    ["M","Valista da Provação",200,431809,0,65458,50000,300,1530,3077,500,80,0,0,0,2,5,3],
+    ["M","Ingrozi da Provação",200,431809,0,65458,50000,300,1530,3077,500,80,0,0,0,2,5,3],
+    ["M","Macadum da Provação",200,431809,0,65458,50000,300,1530,3077,500,80,0,0,0,2,5,3],
+    ["M","Darksha da Provação",200,431809,0,65458,50000,300,1530,3077,500,80,0,0,0,2,5,3],
+    ["M","Sino da Terra da Provação",200,431809,0,65458,50000,300,1530,3077,500,80,0,0,0,2,5,3],
+    ["M","Espírito do Jardim da Provação",200,431809,0,65458,50000,300,1530,3077,500,80,0,0,0,2,5,3],
+    ["M","Sino da Fúria da Provação",200,431809,0,65458,50000,300,1530,3077,500,80,0,0,0,2,5,3],
+    ["M","Espadachim Fantasma da Provação",200,431809,0,65772,50000,300,1530,3015,500,80,0,0,0,2,5,3],
+    ["M","Cavaleiro Fantasma da Provação",200,431809,0,65458,50000,300,1530,3077,500,80,0,0,0,2,5,3],
+    ["M","Ancião Inspector da Provação",200,431809,0,65772,50000,300,1530,3015,500,80,0,0,0,2,5,3]
+  ]]
+];
+
+const DG_NAMES = DG_DATA.map((d) => d[0]);
+function hpShort(n) {
+  if (n >= 1e6) return (n / 1e6).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + 'M';
+  if (n >= 1e3) return Math.round(n / 1e3) + 'k';
+  return String(n);
+}
+const BOSSES = [];
+DG_DATA.forEach(([g, rows]) => rows.forEach((r) => BOSSES.push({
+  g, t: r[0], n: r[1] + ' · Nv. ' + r[2] + ' · HP ' + hpShort(r[3]),
+  hp: r[3], regen: r[4], prec: r[5], aim: r[6], perf: r[7], def: r[8], eva: r[9], blk: r[10], red: r[11],
+  ignAim: r[12], ignRed: r[13], ignPerf: r[14], rCritRate: r[15], rCritDmg: r[16], rAmp: r[17]
+})));
+const BOSS_FIELDS = [
+  ['hp', 'HP'], ['def', 'Defesa'], ['prec', 'Precisão'], ['eva', 'Evasão'],
+  ['aim', 'Acerto'], ['blk', 'Bloqueio'], ['perf', 'Perfuração'], ['red', 'Red. de danos'], ['regen', 'Regen. HP por s'],
+  ['ignAim', 'Ignorar acerto'], ['ignRed', 'Ignorar red. de dano'], ['ignPerf', 'Ignorar perfuração'],
+  ['rCritRate', 'Resist. taxa crítica'], ['rCritDmg', 'Resist. dano crítico'], ['rAmp', 'Resist. técnica amp.']
+];
+const P_ROWS = [
+  ['Ataque', 'atk', 7137, 609], ['Precisão', 'prec', 14664, 500], ['Acerto', 'aim', 6113, 20],
+  ['Perfuração', 'perf', 2582, 454], ['Técnica de Espada Amp. (%)', 'amp', 613, 61],
+  ['Dano crítico (%)', 'crit', 940, 264], ['Dano adicional', 'add', 214, 41],
+  ['Ignorar bloqueio', 'ignBlock', 1524, 100], ['Ignorar redução de dano', 'ignRed', 605, 16],
+  ['Dano final aumentado (%)', 'finalUp', 8, 0],
+  ['Cancelar ignorar perfuração', 'cancelIgnPerf', 333, 53],
+  ['Ignorar resist. taxa crítica (%)', 'ignResCritRate', 25, 0],
+  ['Ignorar resist. dano crítico (%)', 'ignResCritDmg', 308, 4],
+  ['Ignorar resist. técnica amp. (%)', 'ignResAmp', 46, 4],
+  ['__', 'Defesa'],
+  ['Defesa', 'def', 10295, 582], ['Evasão', 'eva', 17363, 410], ['Redução de danos', 'red', 2369, 99],
+  ['Ignorar acerto', 'ignAim', 2172, 110], ['Ignorar perfuração', 'ignPerf', 2697, 277],
+  ['Desfazer ign. redução de dano', 'undoIgnRed', 210, 90]
+];
+
+
+/* ---------- interface ---------- */
+const $ = (id) => document.getElementById(id);
+const fmt = (n) => Math.round(n).toLocaleString('pt-BR');
+const pc = (x) => (x * 100).toLocaleString('pt-BR', { maximumFractionDigits: x < 0.1 ? 1 : 0 }) + '%';
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const STORE = 'cabal-onde-melhorar-v1';
+
+function buildPlayer() {
+  const head = '<div class="row head"><span>Atributo</span><span>Geral</span><span>PvE</span></div>';
+  let h = '<div class="grp">Ataque</div>' + head;
+  P_ROWS.forEach((r) => {
+    if (r[0] === '__') { h += '<div class="grp">' + r[1] + '</div>' + head; return; }
+    const [lab, k, b, v] = r;
+    h += '<div class="row"><span class="lab">' + lab + '</span>' +
+      '<input id="p_' + k + '_b" type="number" value="' + b + '" aria-label="' + lab + ' geral">' +
+      '<input id="p_' + k + '_v" type="number" value="' + v + '" aria-label="' + lab + ' PvE"></div>';
+  });
+  $('player').innerHTML = h;
+}
+const PKEYS = P_ROWS.filter((r) => r[0] !== '__').map((r) => r[1]);
+function saveStats() {
+  try {
+    const o = { hp: $('p_hp').value, critRate: $('p_critRate').value };
+    PKEYS.forEach((k) => { o[k] = [$('p_' + k + '_b').value, $('p_' + k + '_v').value]; });
+    localStorage.setItem(STORE, JSON.stringify(o));
+  } catch (e) { /* sem armazenamento: segue sem salvar */ }
+}
+function loadStats() {
+  try {
+    const o = JSON.parse(localStorage.getItem(STORE) || 'null');
+    if (!o) return;
+    if (o.hp != null) $('p_hp').value = o.hp;
+    if (o.critRate != null) $('p_critRate').value = o.critRate;
+    PKEYS.forEach((k) => { if (Array.isArray(o[k])) { $('p_' + k + '_b').value = o[k][0]; $('p_' + k + '_v').value = o[k][1]; } });
+  } catch (e) { /* ignora */ }
+}
+function getP() {
+  const P = { hp: num($('p_hp').value), critRate: clamp(num($('p_critRate').value), 0, 100) };
+  PKEYS.forEach((k) => { P[k] = num($('p_' + k + '_b').value) + num($('p_' + k + '_v').value); });
+  return P;
+}
+function bossObj(i) {
+  const b = BOSSES[i], B = {};
+  BOSS_FIELDS.forEach(([k]) => { B[k] = b[k] || 0; });
+  return B;
+}
+function skillPct() { return Math.max(1, num($('c_skill').value) || 100); }
+
+function fillDg() { $('dg_pick').innerHTML = DG_NAMES.map((g, i) => '<option value="' + i + '">' + esc(g) + '</option>').join(''); }
+function fillBossPick(dgIdx) {
+  const g = DG_NAMES[dgIdx];
+  const opts = (t) => BOSSES.map((b, i) => (b.g === g && b.t === t) ? '<option value="' + i + '">' + esc(b.n) + '</option>' : '').join('');
+  const c = opts('C'), m = opts('M');
+  $('boss_pick').innerHTML = (c ? '<optgroup label="Chefes">' + c + '</optgroup>' : '') + (m ? '<optgroup label="Monstros">' + m + '</optgroup>' : '');
+  const first = $('boss_pick').querySelector('option');
+  if (first) $('boss_pick').value = first.value;
+}
+
+function render() {
+  const P = getP(), idx = +$('boss_pick').value, B = bossObj(idx), skill = skillPct();
+  const bname = BOSSES[idx].n.split(' · ')[0];
+  const base = evalHit(P, B, skill);
+  const rk = rankLevers(P, B, skill);
+  const up = rk.filter((r) => r.gain > 0.0005);
+  const none = rk.filter((r) => r.gain <= 0.0005);
+
+  // veredito
+  if (!(P.atk > 0)) {
+    $('headline').innerHTML = '<span class="tag t-warn">Falta preencher</span>Digite seus status para ver onde melhorar';
+    $('subline').textContent = 'Preencha ao menos Ataque, Precisão e Acerto na seção 1.';
+    $('tstats').innerHTML = ''; $('rank').innerHTML = ''; $('zero').innerHTML = ''; $('goals').innerHTML = ''; $('regen').textContent = '';
+    renderOverview(P, skill, idx); return;
+  }
+  const top = up[0];
+  let tag = '', cls = '', head = '';
+  const spec = up.filter((r) => r.L.spec && r.gain >= 0.01)[0];
+  if (!top) { tag = 'Em dia'; cls = 't-good'; head = 'Nada rende mais contra ' + esc(bname); }
+  else if (spec && spec.gain >= 0.03) {
+    tag = 'Gargalo'; cls = 't-warn';
+    head = esc(bname) + ': o que está te segurando é ' + esc(spec.L.lab.toLowerCase()) + '. +' + fmt(spec.step) + (spec.L.unit || '') + ' dá ' + pc(spec.gain) + ' mais dano';
+  } else {
+    tag = 'Em dia'; cls = 't-good';
+    head = 'Contra ' + esc(bname) + ' seus atributos específicos já estão bem. O que mais rende é ' + esc(top.L.lab.toLowerCase()) + ' (+' + pc(top.gain) + ')';
+  }
+  $('headline').innerHTML = '<span class="tag ' + cls + '">' + tag + '</span>' + head;
+  $('subline').textContent = top
+    ? 'Esse ganho em dano por golpe corta o tempo da luta em cerca de ' + pc(1 - 1 / (1 + top.gain)) + '.'
+    : 'Seus números já cobrem a defesa, a evasão e as resistências deste alvo.';
+
+  $('tstats').innerHTML = [
+    'Você acerta ' + pc(base.hitP),
+    'Defesa que sobra: ' + fmt(base.defLeft),
+    'Taxa crítica efetiva: ' + Math.round(base.critRateEff) + '%',
+    'Dano crítico efetivo: ' + fmt(base.critDmgEff) + '%'
+  ].map((t) => '<span class="chip">' + t + '</span>').join('');
+
+  // ranking
+  const maxG = up.length ? up[0].gain : 1;
+  $('rank').innerHTML = up.length ? up.map((r, i) => {
+    const miss = r.miss != null && r.miss > 0 ? 'Meta: faltam ' + fmt(r.miss) + ' (tem ' + fmt(r.have) + ', precisa de ' + fmt(r.need) + ').' : (r.need != null && r.L.k !== 'critRate' ? 'Meta cumprida.' : '');
+    return '<li><span class="pos">' + (i + 1) + '</span><span class="rl">' + esc(r.L.lab) +
+      '<small>+' + fmt(r.step) + (r.L.unit || '') + (r.L.spec ? ' · contra este alvo' : ' · geral') + '</small></span>' +
+      '<span class="gn">+' + pc(r.gain) + '</span>' +
+      '<div class="bar"><i style="width:' + Math.max(3, r.gain / maxG * 100) + '%"></i></div>' +
+      (miss ? '<div class="rs">' + miss + '</div>' : '') + '</li>';
+  }).join('') : '<li class="note">Nenhum atributo aumenta o seu dano por golpe contra este alvo.</li>';
+  $('zero').innerHTML = none.length
+    ? '<h2>Sem ganho agora</h2><ul>' + none.map((r) => '<li>' + esc(r.L.lab) + (r.reason ? ': ' + esc(r.reason) : '') + '</li>').join('') + '</ul>'
+    : '';
+
+  // metas
+  const calibReal = num($('c_real').value);
+  const calib = { calibrated: calibReal > 0, scale: calibReal > 0 ? calibReal / base.normal : 1, rate: Math.max(0.1, num($('c_rate').value) || 1) };
+  $('goals').innerHTML = goals(P, B, base).map((g) => {
+    const c = g.kind === 'ok' ? 't-good' : g.kind === 'warn' ? 't-warn' : 't-bad';
+    const lab = g.kind === 'ok' ? 'Ok' : 'Falta';
+    const gv = g.kind === 'ok' ? 'tem ' + fmt(g.have) + ', precisa de ' + fmt(g.need) : 'tem ' + fmt(g.have) + ', precisa de ' + fmt(g.need) + ' (faltam ' + fmt(g.need - g.have) + ')';
+    return '<li><span class="pill ' + c + '">' + lab + '</span><span><span class="gl">' + esc(g.lab) + '</span><br><span class="gv">' + gv + '</span><br><span class="gv">' + esc(g.text) + '</span></span></li>';
+  }).join('');
+
+  // regeneração
+  const rg = regenCheck(P, B, base, calib);
+  if (!rg) $('regen').textContent = 'Este alvo não regenera HP.';
+  else if (!rg.calibrated) $('regen').innerHTML = 'O alvo recupera <strong>' + fmt(rg.regen) + ' HP por segundo</strong> (assumi que a unidade é segundo). Seu dano por segundo precisa ficar bem acima disso. Digite o dano real de um golpe seu abaixo para eu comparar.';
+  else {
+    const k = rg.share >= 1 ? 't-bad' : rg.share >= 0.4 ? 't-warn' : 't-good';
+    $('regen').innerHTML = 'O alvo recupera <strong>' + fmt(rg.regen) + ' HP por segundo</strong>. Seu dano estimado é de <strong>' + fmt(rg.dps) + ' por segundo</strong>, então a regeneração consome <strong class="' + k + '">' + (Number.isFinite(rg.share) ? Math.round(rg.share * 100) + '%' : 'tudo') + '</strong> dele' + (rg.share >= 1 ? ': você não consegue matar.' : '.');
+  }
+
+  renderOverview(P, skill, idx);
+}
+
+function renderOverview(P, skill, selIdx) {
+  const g = BOSSES[selIdx].g;
+  const rows = [];
+  BOSSES.forEach((b, i) => {
+    if (b.g !== g) return;
+    const B = bossObj(i), base = evalHit(P, B, skill);
+    const sp = rankLevers(P, B, skill).filter((r) => r.L.spec && r.gain >= 0.01).slice(0, 2);
+    rows.push({ i, b, base, sp });
+  });
+  $('ovBody').innerHTML = rows.map(({ i, b, base, sp }) => {
+    const nm = b.n.split(' · ');
+    const gg = sp.length ? sp.map((r) => esc(r.L.lab) + ' <span class="t-good">+' + pc(r.gain) + '</span>').join('<br>') : '<span class="note">nenhum, só ataque geral</span>';
+    return '<tr tabindex="0" data-i="' + i + '"' + (i === selIdx ? ' class="sel"' : '') + '><td>' + (b.t === 'C' ? '<span class="pill t-warn">Chefe</span> ' : '') + esc(nm[0]) + ' <span class="note">Nv. ' + esc(nm[1].replace('Nv. ', '')) + '</span></td>' +
+      '<td class="r">' + hpShort(b.hp) + '</td><td class="r">' + pc(base.hitP) + '</td><td class="r">' + fmt(base.defLeft) + '</td><td>' + gg + '</td></tr>';
+  }).join('');
+}
+
+/* ---------- ligação ---------- */
+buildPlayer(); loadStats(); fillDg(); fillBossPick(0);
+let timer = null;
+function later() { clearTimeout(timer); timer = setTimeout(render, 120); }
+document.addEventListener('input', (e) => { if (e.target.matches('input[type=number]')) { saveStats(); later(); } });
+$('boss_pick').addEventListener('change', render);
+$('dg_pick').addEventListener('change', () => { fillBossPick($('dg_pick').value); render(); });
+$('ovBody').addEventListener('click', (e) => { const tr = e.target.closest('tr[data-i]'); if (tr) { $('boss_pick').value = tr.dataset.i; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); } });
+$('ovBody').addEventListener('keydown', (e) => { if (e.key === 'Enter') { const tr = e.target.closest('tr[data-i]'); if (tr) { $('boss_pick').value = tr.dataset.i; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); } } });
+$('clearBtn').addEventListener('click', () => {
+  document.querySelectorAll('#player input, #p_hp').forEach((i) => { i.value = 0; });
+  $('p_critRate').value = 0; saveStats(); render();
+});
+render();
+
+</script>
+</body></html>
